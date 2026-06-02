@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Truck, ShieldCheck, RotateCcw, Sparkles, Flame } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ProductCard, type Product } from "@/components/product-card";
-import { getPrintifyProducts, type StoreProduct } from "@/lib/printify.functions";
 
 import hero from "@/assets/hero.jpg";
+import productHoodie from "@/assets/product-hoodie.jpg";
+import productTee from "@/assets/product-tee.jpg";
+import productHat from "@/assets/product-hat.jpg";
+import productJoggers from "@/assets/product-joggers.jpg";
 import lifestyle1 from "@/assets/lifestyle-1.jpg";
 import lifestyle2 from "@/assets/lifestyle-2.jpg";
 import lifestyle3 from "@/assets/lifestyle-3.jpg";
@@ -26,35 +28,19 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-function toProduct(p: StoreProduct, badge?: string): Product {
-  return {
-    name: p.name,
-    category: p.category,
-    price: p.price,
-    rating: p.rating,
-    reviews: p.reviews,
-    image: p.image,
-    badge,
-  };
-}
+const featured: Product[] = [
+  { name: "Royalty Heavyweight Hoodie", category: "Hoodie", price: 189, rating: 5, reviews: 412, image: productHoodie, badge: "New" },
+  { name: "Signature Oversized Tee", category: "T-Shirt", price: 79, rating: 4.8, reviews: 638, image: productTee },
+  { name: "Monogram Snapback", category: "Hat", price: 65, rating: 4.9, reviews: 287, image: productHat },
+  { name: "Hustler Track Joggers", category: "Joggers", price: 149, rating: 4.7, reviews: 195, image: productJoggers, badge: "Hot" },
+];
 
-function useStoreProducts() {
-  return useQuery({
-    queryKey: ["printify-products"],
-    queryFn: () => getPrintifyProducts(),
-    staleTime: 5 * 60 * 1000,
-  });
-}
-
-function ProductSkeleton() {
-  return (
-    <div className="animate-pulse">
-      <div className="aspect-[4/5] bg-card" />
-      <div className="mt-3 h-3 w-1/3 bg-card" />
-      <div className="mt-2 h-4 w-2/3 bg-card" />
-    </div>
-  );
-}
+const bestsellers: Product[] = [
+  { name: "Signature Oversized Tee", category: "T-Shirt", price: 79, rating: 4.8, reviews: 638, image: productTee, badge: "#1" },
+  { name: "Royalty Heavyweight Hoodie", category: "Hoodie", price: 189, rating: 5, reviews: 412, image: productHoodie, badge: "#2" },
+  { name: "Hustler Track Joggers", category: "Joggers", price: 149, rating: 4.7, reviews: 195, image: productJoggers, badge: "#3" },
+  { name: "Monogram Snapback", category: "Hat", price: 65, rating: 4.9, reviews: 287, image: productHat, badge: "#4" },
+];
 
 function useCountdown() {
   const [time, setTime] = useState({ h: 23, m: 47, s: 12 });
