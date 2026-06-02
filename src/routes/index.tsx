@@ -8,6 +8,10 @@ import { ProductCard, type Product } from "@/components/product-card";
 import { getPrintifyProducts, type StoreProduct } from "@/lib/printify.functions";
 
 import hero from "@/assets/hero.jpg";
+import productHoodie from "@/assets/product-hoodie.jpg";
+import productTee from "@/assets/product-tee.jpg";
+import productHat from "@/assets/product-hat.jpg";
+import productJoggers from "@/assets/product-joggers.jpg";
 import lifestyle1 from "@/assets/lifestyle-1.jpg";
 import lifestyle2 from "@/assets/lifestyle-2.jpg";
 import lifestyle3 from "@/assets/lifestyle-3.jpg";
