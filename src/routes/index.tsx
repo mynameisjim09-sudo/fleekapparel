@@ -65,8 +65,11 @@ function Index() {
     ? all.slice(0, 4).map((p, i) => toProduct(p, i === 0 ? "New" : i === 3 ? "Hot" : undefined))
     : fallback;
   const bestsellers: Product[] = hasLive
-    ? all.slice(4, 8).map((p, i) => toProduct(p, `#${i + 1}`))
-    : fallback.map((p, i) => ({ ...p, badge: `#${i + 1}` }));
+    ? all.slice(4, 5).map((p) => toProduct(p, `#1`))
+    : fallback.slice(0, 1).map((p) => ({ ...p, badge: `#1` }));
+  const specialEdition: Product[] = hasLive
+    ? all.slice(5, 8).map((p) => toProduct(p, "Special Edition"))
+    : fallback.slice(1, 4).map((p) => ({ ...p, badge: "Special Edition" }));
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -76,6 +79,7 @@ function Index() {
       <Featured items={featured} />
       <BrandStory />
       <BestSellers items={bestsellers} />
+      <SpecialEdition items={specialEdition} />
       <SocialProof />
       <EmailCapture />
       <TrustBadges />
@@ -220,6 +224,31 @@ function BestSellers({ items }: { items: Product[] }) {
   );
 }
 
+
+
+function SpecialEdition({ items }: { items: Product[] }) {
+  if (!items.length) return null;
+  return (
+    <section id="special-edition" className="relative border-y border-gold/30 bg-gradient-to-b from-background via-card/40 to-background">
+      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 border border-gold/40 bg-background/40 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold mb-4">
+            <Sparkles className="h-3 w-3" /> Limited Release
+          </div>
+          <h2 className="font-display text-5xl md:text-7xl text-foreground">
+            Special <span className="text-gradient-gold">Edition</span>
+          </h2>
+          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
+            Exclusive white-on-white drops. Crafted in limited quantities for the few who move different.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-3">
+          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 
 function SocialProof() {
