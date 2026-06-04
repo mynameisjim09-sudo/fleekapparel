@@ -61,8 +61,18 @@ function Index() {
   const { data: all } = useSuspenseQuery(productsQueryOptions);
   const hasLive = all.length > 0;
 
+  const mockupFor = (category: string): string => {
+    const c = category.toLowerCase();
+    if (/hoodie|sweat/.test(c)) return productHoodie;
+    if (/hat|cap/.test(c)) return productHat;
+    if (/jogger|pants|short/.test(c)) return productJoggers;
+    return productTee;
+  };
   const featured: Product[] = hasLive
-    ? all.slice(0, 4).map((p, i) => toProduct(p, i === 0 ? "New" : i === 3 ? "Hot" : undefined))
+    ? all.slice(0, 4).map((p, i) => ({
+        ...toProduct(p, i === 0 ? "New" : i === 3 ? "Hot" : undefined),
+        image: mockupFor(p.category),
+      }))
     : fallback;
   const bestsellers: Product[] = hasLive
     ? all.slice(4, 5).map((p) => toProduct(p, `#1`))
