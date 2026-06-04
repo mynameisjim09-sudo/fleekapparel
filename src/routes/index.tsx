@@ -12,6 +12,10 @@ import productHoodie from "@/assets/product-hoodie.jpg";
 import productTee from "@/assets/product-tee.jpg";
 import productHat from "@/assets/product-hat.jpg";
 import productJoggers from "@/assets/product-joggers.jpg";
+import featured1 from "@/assets/featured-1.jpg";
+import featured2 from "@/assets/featured-2.jpg";
+import featured3 from "@/assets/featured-3.jpg";
+import featured4 from "@/assets/featured-4.jpg";
 import lifestyle1 from "@/assets/lifestyle-1.jpg";
 import lifestyle2 from "@/assets/lifestyle-2.png";
 import lifestyle3 from "@/assets/lifestyle-3.jpg";
@@ -61,17 +65,11 @@ function Index() {
   const { data: all } = useSuspenseQuery(productsQueryOptions);
   const hasLive = all.length > 0;
 
-  const mockupFor = (category: string): string => {
-    const c = category.toLowerCase();
-    if (/hoodie|sweat/.test(c)) return productHoodie;
-    if (/hat|cap/.test(c)) return productHat;
-    if (/jogger|pants|short/.test(c)) return productJoggers;
-    return productTee;
-  };
+  const featuredMockups = [featured1, featured2, featured3, featured4];
   const featured: Product[] = hasLive
     ? all.slice(0, 4).map((p, i) => ({
         ...toProduct(p, i === 0 ? "New" : i === 3 ? "Hot" : undefined),
-        image: mockupFor(p.category),
+        image: featuredMockups[i] ?? p.image,
       }))
     : fallback;
   const bestsellers: Product[] = hasLive
