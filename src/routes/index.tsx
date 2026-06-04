@@ -80,6 +80,7 @@ function Index() {
       <EmailCapture />
       <TrustBadges />
       <SiteFooter />
+      <RegistryPopup />
     </div>
   );
 }
