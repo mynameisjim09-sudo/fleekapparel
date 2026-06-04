@@ -226,6 +226,31 @@ function BestSellers({ items }: { items: Product[] }) {
 
 
 
+function SpecialEdition({ items }: { items: Product[] }) {
+  if (!items.length) return null;
+  return (
+    <section id="special-edition" className="relative border-y border-gold/30 bg-gradient-to-b from-background via-card/40 to-background">
+      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 border border-gold/40 bg-background/40 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold mb-4">
+            <Sparkles className="h-3 w-3" /> Limited Release
+          </div>
+          <h2 className="font-display text-5xl md:text-7xl text-foreground">
+            Special <span className="text-gradient-gold">Edition</span>
+          </h2>
+          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
+            Exclusive white-on-white drops. Crafted in limited quantities for the few who move different.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-3">
+          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 function SocialProof() {
   const reviews = [
     { name: "Marcus T.", text: "Quality is insane. The hoodie feels like luxury — getting compliments every day.", stars: 5 },
