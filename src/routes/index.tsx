@@ -337,7 +337,7 @@ function GoldCapsule({ items }: { items: Product[] }) {
 
         {items.length > 0 && (
           <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-5 md:gap-x-6">
-            {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+            {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} variant="collector" index={i} />)}
           </div>
         )}
 
