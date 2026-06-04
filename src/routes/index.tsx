@@ -42,6 +42,14 @@ const bestsellers: Product[] = [
   { name: "Monogram Snapback", category: "Hat", price: 65, rating: 4.9, reviews: 287, image: productHat, badge: "#4" },
 ];
 
+const specialEdition: Product[] = [
+  { name: "Gold Foil Hoodie", category: "Hoodie", price: 249, rating: 5, reviews: 84, image: productHoodie, badge: "Special" },
+  { name: "24K Embroidered Tee", category: "T-Shirt", price: 119, rating: 4.9, reviews: 56, image: productTee, badge: "Limited" },
+  { name: "Black Gold Snapback", category: "Hat", price: 95, rating: 5, reviews: 41, image: productHat, badge: "Rare" },
+  { name: "Midnight Velvet Joggers", category: "Joggers", price: 199, rating: 4.8, reviews: 38, image: productJoggers, badge: "Exclusive" },
+];
+
+
 function useCountdown() {
   const [time, setTime] = useState({ h: 23, m: 47, s: 12 });
   useEffect(() => {
