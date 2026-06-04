@@ -230,48 +230,6 @@ function SocialProof() {
   );
 }
 
-function GoldCapsule({ items }: { items: Product[] }) {
-  const t = useCountdown();
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
-      <div className="relative overflow-hidden border border-gold/30 bg-gradient-to-br from-card to-background p-8 md:p-16">
-        <div className="text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold">Limited Edition · Collector Pieces</p>
-          <h2 className="mt-3 font-display text-5xl md:text-8xl leading-[0.9] text-foreground">
-            The Gold <span className="text-gradient-gold">Capsule</span>
-          </h2>
-          <p className="mt-4 max-w-xl mx-auto text-muted-foreground">
-            Numbered, limited-run collector pieces. Once it's gone, it's gone.
-          </p>
-
-          <div className="mt-8 flex justify-center gap-3 md:gap-5">
-            {[{ v: t.h, l: "Hrs" }, { v: t.m, l: "Min" }, { v: t.s, l: "Sec" }].map((x) => (
-              <div key={x.l} className="min-w-[80px] md:min-w-[110px] border border-border bg-background/60 backdrop-blur p-4">
-                <div className="font-display text-4xl md:text-6xl text-gold tabular-nums">
-                  {String(x.v).padStart(2, "0")}
-                </div>
-                <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mt-1">{x.l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {items.length > 0 && (
-          <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-5 md:gap-x-6">
-            {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} variant="collector" index={i} />)}
-          </div>
-        )}
-
-        <div className="mt-10 text-center">
-          <a href="#featured" className="inline-flex items-center justify-center gap-2 bg-gold px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-gold-foreground shadow-gold hover:scale-[1.02] transition-transform">
-            Claim Your Piece <ArrowRight className="h-4 w-4" />
-          </a>
-          <p className="mt-4 text-xs text-muted-foreground">⚡ Only a handful left in stock</p>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function EmailCapture() {
   return (
