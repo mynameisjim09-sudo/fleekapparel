@@ -260,7 +260,7 @@ function SpecialEdition({ items }: { items: Product[] }) {
           </p>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6">
-          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} variant="vault" index={i} />)}
         </div>
       </div>
     </section>
