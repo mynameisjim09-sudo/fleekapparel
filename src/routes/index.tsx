@@ -3,6 +3,7 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, Truck, ShieldCheck, RotateCcw, Sparkles, Flame } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { RegistryPopup } from "@/components/registry-popup";
 import { ProductCard, type Product } from "@/components/product-card";
 import { getPrintifyProducts, type StoreProduct } from "@/lib/printify.functions";
 
