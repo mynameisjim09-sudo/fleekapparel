@@ -79,6 +79,7 @@ function Index() {
       <Featured items={featured} />
       <BrandStory />
       <BestSellers items={bestsellers} />
+      <SpecialEdition items={specialEdition} />
       <SocialProof />
       <EmailCapture />
       <TrustBadges />
