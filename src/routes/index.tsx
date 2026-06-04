@@ -76,8 +76,8 @@ function Index() {
       }))
     : fallback;
   const bestsellers: Product[] = hasLive
-    ? all.slice(4, 5).map((p) => toProduct(p, `#1`))
-    : fallback.slice(0, 1).map((p) => ({ ...p, badge: `#1` }));
+    ? all.slice(0, 3).map((p, i) => toProduct(p, `#${i + 1}`))
+    : fallback.slice(0, 3).map((p, i) => ({ ...p, badge: `#${i + 1}` }));
   const specialMockups = [special1, special2, special3];
   const specialEdition: Product[] = hasLive
     ? all.slice(5, 8).map((p, i) => ({ ...toProduct(p, "Special Edition"), image: specialMockups[i] ?? p.image }))
