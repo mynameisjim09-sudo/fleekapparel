@@ -26,6 +26,11 @@ import wanted1 from "@/assets/wanted-1.jpg";
 import wanted2 from "@/assets/wanted-2.jpg";
 import wanted3 from "@/assets/wanted-3.jpg";
 import wanted4 from "@/assets/wanted-4.jpg";
+import capsule1 from "@/assets/capsule-1.jpg";
+import capsule2 from "@/assets/capsule-2.jpg";
+import capsule3 from "@/assets/capsule-3.jpg";
+import capsule4 from "@/assets/capsule-4.jpg";
+import capsule5 from "@/assets/capsule-5.jpg";
 
 const productsQueryOptions = queryOptions({
   queryKey: ["printify-products"],
@@ -88,11 +93,24 @@ function Index() {
     ? all.slice(5, 8).map((p, i) => ({ ...toProduct(p, "Special Edition"), image: specialMockups[i] ?? p.image }))
     : fallback.slice(1, 4).map((p) => ({ ...p, badge: "Special Edition" }));
 
+  const goldenCapsule: Product[] = [
+    { name: "Defined By Darkness", category: "Collector Tee · 01/05", price: 220, rating: 5, reviews: 0, image: capsule1, badge: "01 / 05" },
+    { name: "Shadows Blueprint", category: "Collector Tee · 02/05", price: 220, rating: 5, reviews: 0, image: capsule2, badge: "02 / 05" },
+    { name: "Void Witness", category: "Collector Tee · 03/05", price: 220, rating: 5, reviews: 0, image: capsule3, badge: "03 / 05" },
+    { name: "No Reflection", category: "Collector Tee · 04/05", price: 220, rating: 5, reviews: 0, image: capsule4, badge: "04 / 05" },
+    { name: "Trained To Ignore", category: "Collector Tee · 05/05", price: 220, rating: 5, reviews: 0, image: capsule5, badge: "05 / 05" },
+  ];
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
       <Hero />
       <MarqueeBar />
+      <Featured items={featured} />
+      <BrandStory />
+      <BestSellers items={bestsellers} />
+      <SpecialEdition items={specialEdition} />
+      <GoldenCapsule items={goldenCapsule} />
       <Featured items={featured} />
       <BrandStory />
       <BestSellers items={bestsellers} />
@@ -260,6 +278,30 @@ function SpecialEdition({ items }: { items: Product[] }) {
           </p>
         </div>
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-3">
+          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function GoldenCapsule({ items }: { items: Product[] }) {
+  if (!items.length) return null;
+  return (
+    <section id="golden-capsule" className="relative border-y border-gold/40 bg-gradient-to-b from-background via-[#0a0805] to-background">
+      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 border border-gold/50 bg-gold/5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold mb-4">
+            <Sparkles className="h-3 w-3" /> Collector Edition · 5 Pieces Only
+          </div>
+          <h2 className="font-display text-5xl md:text-7xl text-foreground">
+            Golden <span className="text-gradient-gold">Capsule</span>
+          </h2>
+          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
+            Archival collector pieces, sealed and numbered. Each tee enshrined in a brushed-gold vault — built for the few who collect, not just wear.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-5 md:gap-x-6">
           {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
         </div>
       </div>
