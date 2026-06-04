@@ -10,33 +10,10 @@ export interface Product {
   badge?: string;
 }
 
-function Hanger() {
-  return (
-    <div className="relative z-10 mx-auto -mb-3 flex h-10 w-24 items-end justify-center">
-      <svg
-        viewBox="0 0 96 40"
-        className="h-full w-full text-gold drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        {/* Hook */}
-        <path d="M48 14 C48 8, 52 4, 52 9" />
-        {/* Hanger body */}
-        <path d="M48 14 L8 34 L88 34 L48 14 Z" />
-      </svg>
-    </div>
-  );
-}
-
 export function ProductCard({ product }: { product: Product }) {
   return (
     <div className="group relative">
-      <Hanger />
-      <div className="relative aspect-[4/5] overflow-hidden bg-card border-t-2 border-gold/40">
+      <div className="relative aspect-[4/5] overflow-hidden bg-card">
         <img
           src={product.image}
           alt={product.name}
