@@ -16,6 +16,9 @@ import featured1 from "@/assets/featured-1.jpg";
 import featured2 from "@/assets/featured-2.jpg";
 import featured3 from "@/assets/featured-3.jpg";
 import featured4 from "@/assets/featured-4.jpg";
+import special1 from "@/assets/special-1.jpg";
+import special2 from "@/assets/special-2.jpg";
+import special3 from "@/assets/special-3.jpg";
 import lifestyle1 from "@/assets/lifestyle-1.jpg";
 import lifestyle2 from "@/assets/lifestyle-2.png";
 import lifestyle3 from "@/assets/lifestyle-3.jpg";
@@ -75,8 +78,9 @@ function Index() {
   const bestsellers: Product[] = hasLive
     ? all.slice(4, 5).map((p) => toProduct(p, `#1`))
     : fallback.slice(0, 1).map((p) => ({ ...p, badge: `#1` }));
+  const specialMockups = [special1, special2, special3];
   const specialEdition: Product[] = hasLive
-    ? all.slice(5, 8).map((p) => toProduct(p, "Special Edition"))
+    ? all.slice(5, 8).map((p, i) => ({ ...toProduct(p, "Special Edition"), image: specialMockups[i] ?? p.image }))
     : fallback.slice(1, 4).map((p) => ({ ...p, badge: "Special Edition" }));
 
   return (
