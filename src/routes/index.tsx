@@ -77,7 +77,9 @@ function Index() {
       <Featured />
       <BrandStory />
       <BestSellers />
+      <SpecialEdition />
       <SocialProof />
+
       <ScarcityDrop />
       <EmailCapture />
       <TrustBadges />
