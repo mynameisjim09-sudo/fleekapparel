@@ -65,8 +65,11 @@ function Index() {
     ? all.slice(0, 4).map((p, i) => toProduct(p, i === 0 ? "New" : i === 3 ? "Hot" : undefined))
     : fallback;
   const bestsellers: Product[] = hasLive
-    ? all.slice(4, 8).map((p, i) => toProduct(p, `#${i + 1}`))
-    : fallback.map((p, i) => ({ ...p, badge: `#${i + 1}` }));
+    ? all.slice(4, 5).map((p) => toProduct(p, `#1`))
+    : fallback.slice(0, 1).map((p) => ({ ...p, badge: `#1` }));
+  const specialEdition: Product[] = hasLive
+    ? all.slice(5, 8).map((p) => toProduct(p, "Special Edition"))
+    : fallback.slice(1, 4).map((p) => ({ ...p, badge: "Special Edition" }));
 
   return (
     <div className="min-h-screen bg-background text-foreground">
