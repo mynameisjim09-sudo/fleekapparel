@@ -221,6 +221,30 @@ function BestSellers() {
   );
 }
 
+function SpecialEdition() {
+  return (
+    <section id="special-edition" className="relative border-y border-border bg-gradient-to-b from-background via-card/40 to-background">
+      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 border border-gold/40 bg-background/40 backdrop-blur px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold mb-4">
+            <Sparkles className="h-3 w-3" /> Vault Exclusive
+          </div>
+          <h2 className="font-display text-5xl md:text-7xl text-foreground">
+            Special <span className="text-gradient-gold">Edition</span>
+          </h2>
+          <p className="mt-4 max-w-xl mx-auto text-muted-foreground">
+            Rare drops, numbered runs, and one-of-one detailing. Reserved for the few.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
+          {specialEdition.map((p) => <ProductCard key={p.name} product={p} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 function SocialProof() {
   const reviews = [
     { name: "Marcus T.", text: "Quality is insane. The hoodie feels like luxury — getting compliments every day.", stars: 5 },
