@@ -22,6 +22,10 @@ import special3 from "@/assets/special-3.jpg";
 import lifestyle1 from "@/assets/lifestyle-1.jpg";
 import lifestyle2 from "@/assets/lifestyle-2.png";
 import lifestyle3 from "@/assets/lifestyle-3.jpg";
+import wanted1 from "@/assets/wanted-1.jpg";
+import wanted2 from "@/assets/wanted-2.jpg";
+import wanted3 from "@/assets/wanted-3.jpg";
+import wanted4 from "@/assets/wanted-4.jpg";
 
 const productsQueryOptions = queryOptions({
   queryKey: ["printify-products"],
@@ -75,9 +79,10 @@ function Index() {
         image: featuredMockups[i] ?? p.image,
       }))
     : fallback;
+  const wantedMockups = [wanted1, wanted2, wanted3, wanted4];
   const bestsellers: Product[] = hasLive
-    ? all.slice(0, 4).map((p, i) => toProduct(p, `#${i + 1}`))
-    : fallback.slice(0, 4).map((p, i) => ({ ...p, badge: `#${i + 1}` }));
+    ? all.slice(0, 4).map((p, i) => ({ ...toProduct(p, `#${i + 1}`), image: wantedMockups[i] ?? p.image }))
+    : fallback.slice(0, 4).map((p, i) => ({ ...p, badge: `#${i + 1}`, image: wantedMockups[i] ?? p.image }));
   const specialMockups = [special1, special2, special3];
   const specialEdition: Product[] = hasLive
     ? all.slice(5, 8).map((p, i) => ({ ...toProduct(p, "Special Edition"), image: specialMockups[i] ?? p.image }))
