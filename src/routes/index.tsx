@@ -1,11 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, Truck, ShieldCheck, RotateCcw, Sparkles, Flame } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ProductCard, type Product } from "@/components/product-card";
-import { getPrintifyProducts, type StoreProduct } from "@/lib/printify.functions";
 
 import hero from "@/assets/hero.jpg";
 import productHoodie from "@/assets/product-hoodie.jpg";
@@ -15,12 +12,6 @@ import productJoggers from "@/assets/product-joggers.jpg";
 import lifestyle1 from "@/assets/lifestyle-1.jpg";
 import lifestyle2 from "@/assets/lifestyle-2.jpg";
 import lifestyle3 from "@/assets/lifestyle-3.jpg";
-
-const productsQueryOptions = queryOptions({
-  queryKey: ["printify-products"],
-  queryFn: () => getPrintifyProducts(),
-  staleTime: 1000 * 60 * 5,
-});
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,66 +24,19 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(productsQueryOptions),
   component: Index,
 });
 
-// Fallback mock products used if Printify returns nothing
-const fallback: Product[] = [
+const featured: Product[] = [
   { name: "Royalty Heavyweight Hoodie", category: "Hoodie", price: 189, rating: 5, reviews: 412, image: productHoodie, badge: "New" },
   { name: "Signature Oversized Tee", category: "T-Shirt", price: 79, rating: 4.8, reviews: 638, image: productTee },
   { name: "Monogram Snapback", category: "Hat", price: 65, rating: 4.9, reviews: 287, image: productHat },
   { name: "Hustler Track Joggers", category: "Joggers", price: 149, rating: 4.7, reviews: 195, image: productJoggers, badge: "Hot" },
 ];
 
-function toProduct(p: StoreProduct, badge?: string): Product {
-  return {
-    name: p.name,
-    category: p.category,
-    price: p.price,
-    rating: p.rating,
-    reviews: p.reviews,
-    image: p.image,
-    badge,
-  };
-}
-
-function useCountdown() {
-  const [time, setTime] = useState({ h: 23, m: 47, s: 12 });
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTime((t) => {
-        let { h, m, s } = t;
-        s--;
-        if (s < 0) { s = 59; m--; }
-        if (m < 0) { m = 59; h--; }
-        if (h < 0) { h = 23; }
-        return { h, m, s };
-      });
-    }, 1000);
-    return () => clearInterval(id);
-  }, []);
-  return time;
-}
+const bestsellers: Product[] = featured.map((p, i) => ({ ...p, badge: `#${i + 1}` }));
 
 function Index() {
-  const { data: all } = useSuspenseQuery(productsQueryOptions);
-
-  const hasLive = all.length > 0;
-  const featured: Product[] = hasLive
-    ? all.slice(0, 4).map((p, i) => toProduct(p, i === 0 ? "New" : i === 3 ? "Hot" : undefined))
-    : fallback;
-  const bestsellersIdx = [4, 8, 9, 10];
-  const bestsellers: Product[] = hasLive
-    ? bestsellersIdx.map((idx, i) => all[idx] && toProduct(all[idx], `#${i + 1}`)).filter(Boolean) as Product[]
-    : fallback.map((p, i) => ({ ...p, badge: `#${i + 1}` }));
-  const specialEdition: Product[] = hasLive
-    ? all.slice(5, 8).map((p, i) => toProduct(p, ["Special", "Limited", "Rare"][i]))
-    : fallback.slice(0, 3).map((p, i) => ({ ...p, badge: ["Special", "Limited", "Rare"][i] }));
-  const goldCapsule: Product[] = hasLive
-    ? all.slice(-5).map((p) => toProduct(p, "Collector"))
-    : [];
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
@@ -101,15 +45,14 @@ function Index() {
       <Featured items={featured} />
       <BrandStory />
       <BestSellers items={bestsellers} />
-      <SpecialEdition items={specialEdition} />
       <SocialProof />
-      <GoldCapsule items={goldCapsule} />
       <EmailCapture />
       <TrustBadges />
       <SiteFooter />
     </div>
   );
 }
+
 
 function Hero() {
   return (
