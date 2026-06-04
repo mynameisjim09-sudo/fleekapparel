@@ -285,6 +285,30 @@ function SpecialEdition({ items }: { items: Product[] }) {
   );
 }
 
+function GoldenCapsule({ items }: { items: Product[] }) {
+  if (!items.length) return null;
+  return (
+    <section id="golden-capsule" className="relative border-y border-gold/40 bg-gradient-to-b from-background via-[#0a0805] to-background">
+      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 border border-gold/50 bg-gold/5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold mb-4">
+            <Sparkles className="h-3 w-3" /> Collector Edition · 5 Pieces Only
+          </div>
+          <h2 className="font-display text-5xl md:text-7xl text-foreground">
+            Golden <span className="text-gradient-gold">Capsule</span>
+          </h2>
+          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
+            Archival collector pieces, sealed and numbered. Each tee enshrined in a brushed-gold vault — built for the few who collect, not just wear.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-5 md:gap-x-6">
+          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 
 function SocialProof() {
   const reviews = [
