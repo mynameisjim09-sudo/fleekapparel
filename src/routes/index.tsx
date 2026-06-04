@@ -82,11 +82,12 @@ function Index() {
   const featured: Product[] = hasLive
     ? all.slice(0, 4).map((p, i) => toProduct(p, i === 0 ? "New" : i === 3 ? "Hot" : undefined))
     : fallback;
+  const bestsellersIdx = [4, 8, 9, 10];
   const bestsellers: Product[] = hasLive
-    ? all.slice(4, 8).map((p, i) => toProduct(p, `#${i + 1}`))
+    ? bestsellersIdx.map((idx, i) => all[idx] && toProduct(all[idx], `#${i + 1}`)).filter(Boolean) as Product[]
     : fallback.map((p, i) => ({ ...p, badge: `#${i + 1}` }));
   const specialEdition: Product[] = hasLive
-    ? all.slice(8, 11).map((p, i) => toProduct(p, ["Special", "Limited", "Rare"][i]))
+    ? all.slice(5, 8).map((p, i) => toProduct(p, ["Special", "Limited", "Rare"][i]))
     : fallback.slice(0, 3).map((p, i) => ({ ...p, badge: ["Special", "Limited", "Rare"][i] }));
   const goldCapsule: Product[] = hasLive
     ? all.slice(-5).map((p) => toProduct(p, "Collector"))
