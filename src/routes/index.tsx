@@ -42,6 +42,14 @@ const bestsellers: Product[] = [
   { name: "Monogram Snapback", category: "Hat", price: 65, rating: 4.9, reviews: 287, image: productHat, badge: "#4" },
 ];
 
+const specialEdition: Product[] = [
+  { name: "Gold Foil Hoodie", category: "Hoodie", price: 249, rating: 5, reviews: 84, image: productHoodie, badge: "Special" },
+  { name: "24K Embroidered Tee", category: "T-Shirt", price: 119, rating: 4.9, reviews: 56, image: productTee, badge: "Limited" },
+  { name: "Black Gold Snapback", category: "Hat", price: 95, rating: 5, reviews: 41, image: productHat, badge: "Rare" },
+  { name: "Midnight Velvet Joggers", category: "Joggers", price: 199, rating: 4.8, reviews: 38, image: productJoggers, badge: "Exclusive" },
+];
+
+
 function useCountdown() {
   const [time, setTime] = useState({ h: 23, m: 47, s: 12 });
   useEffect(() => {
@@ -69,7 +77,9 @@ function Index() {
       <Featured />
       <BrandStory />
       <BestSellers />
+      <SpecialEdition />
       <SocialProof />
+
       <ScarcityDrop />
       <EmailCapture />
       <TrustBadges />
@@ -210,6 +220,30 @@ function BestSellers() {
     </section>
   );
 }
+
+function SpecialEdition() {
+  return (
+    <section id="special-edition" className="relative border-y border-border bg-gradient-to-b from-background via-card/40 to-background">
+      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 border border-gold/40 bg-background/40 backdrop-blur px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold mb-4">
+            <Sparkles className="h-3 w-3" /> Vault Exclusive
+          </div>
+          <h2 className="font-display text-5xl md:text-7xl text-foreground">
+            Special <span className="text-gradient-gold">Edition</span>
+          </h2>
+          <p className="mt-4 max-w-xl mx-auto text-muted-foreground">
+            Rare drops, numbered runs, and one-of-one detailing. Reserved for the few.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
+          {specialEdition.map((p) => <ProductCard key={p.name} product={p} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 
 function SocialProof() {
   const reviews = [
