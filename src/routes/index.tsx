@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, Truck, ShieldCheck, RotateCcw, Sparkles, Flame } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ProductCard, type Product } from "@/components/product-card";
+import { getPrintifyProducts, type StoreProduct } from "@/lib/printify.functions";
 
 import hero from "@/assets/hero.jpg";
 import productHoodie from "@/assets/product-hoodie.jpg";
@@ -13,6 +15,12 @@ import productJoggers from "@/assets/product-joggers.jpg";
 import lifestyle1 from "@/assets/lifestyle-1.jpg";
 import lifestyle2 from "@/assets/lifestyle-2.jpg";
 import lifestyle3 from "@/assets/lifestyle-3.jpg";
+
+const productsQueryOptions = queryOptions({
+  queryKey: ["printify-products"],
+  queryFn: () => getPrintifyProducts(),
+  staleTime: 1000 * 60 * 5,
+});
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,30 +33,29 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(productsQueryOptions),
   component: Index,
 });
 
-const featured: Product[] = [
+// Fallback mock products used if Printify returns nothing
+const fallback: Product[] = [
   { name: "Royalty Heavyweight Hoodie", category: "Hoodie", price: 189, rating: 5, reviews: 412, image: productHoodie, badge: "New" },
   { name: "Signature Oversized Tee", category: "T-Shirt", price: 79, rating: 4.8, reviews: 638, image: productTee },
   { name: "Monogram Snapback", category: "Hat", price: 65, rating: 4.9, reviews: 287, image: productHat },
   { name: "Hustler Track Joggers", category: "Joggers", price: 149, rating: 4.7, reviews: 195, image: productJoggers, badge: "Hot" },
 ];
 
-const bestsellers: Product[] = [
-  { name: "Signature Oversized Tee", category: "T-Shirt", price: 79, rating: 4.8, reviews: 638, image: productTee, badge: "#1" },
-  { name: "Royalty Heavyweight Hoodie", category: "Hoodie", price: 189, rating: 5, reviews: 412, image: productHoodie, badge: "#2" },
-  { name: "Hustler Track Joggers", category: "Joggers", price: 149, rating: 4.7, reviews: 195, image: productJoggers, badge: "#3" },
-  { name: "Monogram Snapback", category: "Hat", price: 65, rating: 4.9, reviews: 287, image: productHat, badge: "#4" },
-];
-
-const specialEdition: Product[] = [
-  { name: "Gold Foil Hoodie", category: "Hoodie", price: 249, rating: 5, reviews: 84, image: productHoodie, badge: "Special" },
-  { name: "24K Embroidered Tee", category: "T-Shirt", price: 119, rating: 4.9, reviews: 56, image: productTee, badge: "Limited" },
-  { name: "Black Gold Snapback", category: "Hat", price: 95, rating: 5, reviews: 41, image: productHat, badge: "Rare" },
-  { name: "Midnight Velvet Joggers", category: "Joggers", price: 199, rating: 4.8, reviews: 38, image: productJoggers, badge: "Exclusive" },
-];
-
+function toProduct(p: StoreProduct, badge?: string): Product {
+  return {
+    name: p.name,
+    category: p.category,
+    price: p.price,
+    rating: p.rating,
+    reviews: p.reviews,
+    image: p.image,
+    badge,
+  };
+}
 
 function useCountdown() {
   const [time, setTime] = useState({ h: 23, m: 47, s: 12 });
@@ -69,18 +76,33 @@ function useCountdown() {
 }
 
 function Index() {
+  const { data: all } = useSuspenseQuery(productsQueryOptions);
+
+  const hasLive = all.length > 0;
+  const featured: Product[] = hasLive
+    ? all.slice(0, 4).map((p, i) => toProduct(p, i === 0 ? "New" : i === 3 ? "Hot" : undefined))
+    : fallback;
+  const bestsellers: Product[] = hasLive
+    ? all.slice(4, 8).map((p, i) => toProduct(p, `#${i + 1}`))
+    : fallback.map((p, i) => ({ ...p, badge: `#${i + 1}` }));
+  const specialEdition: Product[] = hasLive
+    ? all.slice(8, 12).map((p, i) => toProduct(p, ["Special", "Limited", "Rare", "Exclusive"][i]))
+    : fallback.map((p, i) => ({ ...p, badge: ["Special", "Limited", "Rare", "Exclusive"][i] }));
+  const goldCapsule: Product[] = hasLive
+    ? all.slice(-5).map((p) => toProduct(p, "Collector"))
+    : [];
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
       <Hero />
       <MarqueeBar />
-      <Featured />
+      <Featured items={featured} />
       <BrandStory />
-      <BestSellers />
-      <SpecialEdition />
+      <BestSellers items={bestsellers} />
+      <SpecialEdition items={specialEdition} />
       <SocialProof />
-
-      <ScarcityDrop />
+      <GoldCapsule items={goldCapsule} />
       <EmailCapture />
       <TrustBadges />
       <SiteFooter />
@@ -146,7 +168,7 @@ function MarqueeBar() {
   );
 }
 
-function Featured() {
+function Featured({ items }: { items: Product[] }) {
   return (
     <section id="featured" className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
       <div className="flex items-end justify-between gap-4 mb-10">
@@ -159,7 +181,7 @@ function Featured() {
         </a>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
-        {featured.map((p) => <ProductCard key={p.name} product={p} />)}
+        {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
       </div>
     </section>
   );
@@ -203,7 +225,7 @@ function Stat({ n, l }: { n: string; l: string }) {
   );
 }
 
-function BestSellers() {
+function BestSellers({ items }: { items: Product[] }) {
   return (
     <section id="bestsellers" className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
       <div className="text-center mb-12">
@@ -215,13 +237,13 @@ function BestSellers() {
         <h2 className="font-display text-6xl md:text-8xl text-foreground">Most Wanted</h2>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
-        {bestsellers.map((p) => <ProductCard key={p.name} product={p} />)}
+        {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
       </div>
     </section>
   );
 }
 
-function SpecialEdition() {
+function SpecialEdition({ items }: { items: Product[] }) {
   return (
     <section id="special-edition" className="relative border-y border-border bg-gradient-to-b from-background via-card/40 to-background">
       <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
@@ -237,7 +259,7 @@ function SpecialEdition() {
           </p>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
-          {specialEdition.map((p) => <ProductCard key={p.name} product={p} />)}
+          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
         </div>
       </div>
     </section>
@@ -286,34 +308,44 @@ function SocialProof() {
   );
 }
 
-function ScarcityDrop() {
+function GoldCapsule({ items }: { items: Product[] }) {
   const t = useCountdown();
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
-      <div className="relative overflow-hidden border border-gold/30 bg-gradient-to-br from-card to-background p-8 md:p-16 text-center">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold">Limited Edition</p>
-        <h2 className="mt-3 font-display text-5xl md:text-8xl leading-[0.9] text-foreground">
-          The Gold <span className="text-gradient-gold">Capsule</span>
-        </h2>
-        <p className="mt-4 max-w-xl mx-auto text-muted-foreground">
-          Only 250 pieces. Once it's gone, it's gone. Don't blend in.
-        </p>
+      <div className="relative overflow-hidden border border-gold/30 bg-gradient-to-br from-card to-background p-8 md:p-16">
+        <div className="text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold">Limited Edition · Collector Pieces</p>
+          <h2 className="mt-3 font-display text-5xl md:text-8xl leading-[0.9] text-foreground">
+            The Gold <span className="text-gradient-gold">Capsule</span>
+          </h2>
+          <p className="mt-4 max-w-xl mx-auto text-muted-foreground">
+            Numbered, limited-run collector pieces. Once it's gone, it's gone.
+          </p>
 
-        <div className="mt-8 flex justify-center gap-3 md:gap-5">
-          {[{ v: t.h, l: "Hrs" }, { v: t.m, l: "Min" }, { v: t.s, l: "Sec" }].map((x) => (
-            <div key={x.l} className="min-w-[80px] md:min-w-[110px] border border-border bg-background/60 backdrop-blur p-4">
-              <div className="font-display text-4xl md:text-6xl text-gold tabular-nums">
-                {String(x.v).padStart(2, "0")}
+          <div className="mt-8 flex justify-center gap-3 md:gap-5">
+            {[{ v: t.h, l: "Hrs" }, { v: t.m, l: "Min" }, { v: t.s, l: "Sec" }].map((x) => (
+              <div key={x.l} className="min-w-[80px] md:min-w-[110px] border border-border bg-background/60 backdrop-blur p-4">
+                <div className="font-display text-4xl md:text-6xl text-gold tabular-nums">
+                  {String(x.v).padStart(2, "0")}
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mt-1">{x.l}</div>
               </div>
-              <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mt-1">{x.l}</div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        <a href="#featured" className="mt-10 inline-flex items-center justify-center gap-2 bg-gold px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-gold-foreground shadow-gold hover:scale-[1.02] transition-transform">
-          Claim Your Piece <ArrowRight className="h-4 w-4" />
-        </a>
-        <p className="mt-4 text-xs text-muted-foreground">⚡ Only 47 left in stock</p>
+        {items.length > 0 && (
+          <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-5 md:gap-x-6">
+            {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+          </div>
+        )}
+
+        <div className="mt-10 text-center">
+          <a href="#featured" className="inline-flex items-center justify-center gap-2 bg-gold px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-gold-foreground shadow-gold hover:scale-[1.02] transition-transform">
+            Claim Your Piece <ArrowRight className="h-4 w-4" />
+          </a>
+          <p className="mt-4 text-xs text-muted-foreground">⚡ Only a handful left in stock</p>
+        </div>
       </div>
     </section>
   );
