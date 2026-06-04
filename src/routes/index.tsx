@@ -238,7 +238,7 @@ function BestSellers({ items }: { items: Product[] }) {
         <h2 className="font-display text-6xl md:text-8xl text-foreground">Most Wanted</h2>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
-        {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+        {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} variant="ranked" index={i} />)}
       </div>
     </section>
   );
