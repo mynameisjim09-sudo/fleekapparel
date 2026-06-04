@@ -182,7 +182,7 @@ function Featured({ items }: { items: Product[] }) {
         </a>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
-        {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+        {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} variant="default" index={i} />)}
       </div>
     </section>
   );
@@ -238,7 +238,7 @@ function BestSellers({ items }: { items: Product[] }) {
         <h2 className="font-display text-6xl md:text-8xl text-foreground">Most Wanted</h2>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
-        {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+        {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} variant="ranked" index={i} />)}
       </div>
     </section>
   );
@@ -260,7 +260,7 @@ function SpecialEdition({ items }: { items: Product[] }) {
           </p>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6">
-          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} variant="vault" index={i} />)}
         </div>
       </div>
     </section>
@@ -337,7 +337,7 @@ function GoldCapsule({ items }: { items: Product[] }) {
 
         {items.length > 0 && (
           <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-5 md:gap-x-6">
-            {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
+            {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} variant="collector" index={i} />)}
           </div>
         )}
 
