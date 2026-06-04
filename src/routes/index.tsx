@@ -13,7 +13,7 @@ import productTee from "@/assets/product-tee.jpg";
 import productHat from "@/assets/product-hat.jpg";
 import productJoggers from "@/assets/product-joggers.jpg";
 import lifestyle1 from "@/assets/lifestyle-1.jpg";
-import lifestyle2 from "@/assets/lifestyle-2.jpg";
+import lifestyle2 from "@/assets/lifestyle-2.png";
 import lifestyle3 from "@/assets/lifestyle-3.jpg";
 
 const productsQueryOptions = queryOptions({
