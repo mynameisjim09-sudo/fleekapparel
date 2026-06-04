@@ -86,8 +86,8 @@ function Index() {
     ? all.slice(4, 8).map((p, i) => toProduct(p, `#${i + 1}`))
     : fallback.map((p, i) => ({ ...p, badge: `#${i + 1}` }));
   const specialEdition: Product[] = hasLive
-    ? all.slice(8, 12).map((p, i) => toProduct(p, ["Special", "Limited", "Rare", "Exclusive"][i]))
-    : fallback.map((p, i) => ({ ...p, badge: ["Special", "Limited", "Rare", "Exclusive"][i] }));
+    ? all.slice(8, 11).map((p, i) => toProduct(p, ["Special", "Limited", "Rare"][i]))
+    : fallback.slice(0, 3).map((p, i) => ({ ...p, badge: ["Special", "Limited", "Rare"][i] }));
   const goldCapsule: Product[] = hasLive
     ? all.slice(-5).map((p) => toProduct(p, "Collector"))
     : [];
@@ -258,7 +258,7 @@ function SpecialEdition({ items }: { items: Product[] }) {
             Rare drops, numbered runs, and one-of-one detailing. Reserved for the few.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6">
           {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
         </div>
       </div>
