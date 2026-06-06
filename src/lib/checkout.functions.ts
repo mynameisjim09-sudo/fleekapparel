@@ -3,17 +3,16 @@ import { getRequestHost } from "@tanstack/react-start/server";
 import Stripe from "stripe";
 import { z } from "zod";
 
-const LineItemSchema = z.object({
-  name: z.string().min(1).max(255),
-  description: z.string().max(500).optional(),
-  // amount in cents (USD)
-  amount: z.number().int().min(50).max(1_000_000),
-  quantity: z.number().int().min(1).max(99).default(1),
-  image: z.string().url().optional(),
-});
-
 const InputSchema = z.object({
-  items: z.array(LineItemSchema).min(1).max(20),
+  items: z
+    .array(
+      z.object({
+        priceId: z.string().regex(/^price_[A-Za-z0-9]+$/),
+        quantity: z.number().int().min(1).max(99).default(1),
+      }),
+    )
+    .min(1)
+    .max(20),
   mode: z.enum(["payment", "subscription"]).default("payment"),
   successPath: z.string().startsWith("/").max(255).default("/?checkout=success"),
   cancelPath: z.string().startsWith("/").max(255).default("/?checkout=cancelled"),
@@ -33,18 +32,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
     const session = await stripe.checkout.sessions.create({
       mode: data.mode,
-      line_items: data.items.map((item) => ({
-        quantity: item.quantity,
-        price_data: {
-          currency: "usd",
-          unit_amount: item.amount,
-          product_data: {
-            name: item.name,
-            ...(item.description ? { description: item.description } : {}),
-            ...(item.image ? { images: [item.image] } : {}),
-          },
-        },
-      })),
+      line_items: data.items.map((i) => ({ price: i.priceId, quantity: i.quantity })),
       success_url: `${origin}${data.successPath}`,
       cancel_url: `${origin}${data.cancelPath}`,
     });
