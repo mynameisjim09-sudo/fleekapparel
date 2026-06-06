@@ -20,17 +20,19 @@ export const Route = createFileRoute("/")({
 const TARGET = new Date("2026-06-12T17:00:00Z").getTime();
 
 function useCountdown() {
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
-  const diff = Math.max(0, TARGET - now);
+  const diff = now === null ? TARGET - Date.parse("2026-06-06T00:00:00Z") : Math.max(0, TARGET - now);
+  const ready = now !== null;
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor((diff % 86400000) / 3600000);
   const minutes = Math.floor((diff % 3600000) / 60000);
   const seconds = Math.floor((diff % 60000) / 1000);
-  return { days, hours, minutes, seconds };
+  return { days, hours, minutes, seconds, ready };
 }
 
 function Unit({ value, label }: { value: number; label: string }) {
