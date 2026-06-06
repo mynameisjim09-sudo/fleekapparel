@@ -1,410 +1,113 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowRight, Truck, ShieldCheck, RotateCcw, Sparkles, Flame } from "lucide-react";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
-import { RegistryPopup } from "@/components/registry-popup";
-import { ProductCard, type Product } from "@/components/product-card";
-import { getPrintifyProducts, type StoreProduct } from "@/lib/printify.functions";
-
-import hero from "@/assets/hero.jpg";
-import productHoodie from "@/assets/product-hoodie.jpg";
-import productTee from "@/assets/product-tee.jpg";
-import productHat from "@/assets/product-hat.jpg";
-import productJoggers from "@/assets/product-joggers.jpg";
-import featured1 from "@/assets/featured-1.jpg";
-import featured2 from "@/assets/featured-2.jpg";
-import featured3 from "@/assets/featured-3.jpg";
-import featured4 from "@/assets/featured-4.jpg";
-import special1 from "@/assets/special-1.jpg";
-import special2 from "@/assets/special-2.jpg";
-import special3 from "@/assets/special-3.jpg";
-import lifestyle1 from "@/assets/lifestyle-1.jpg";
-import lifestyle2 from "@/assets/lifestyle-2.png";
-import lifestyle3 from "@/assets/lifestyle-3.jpg";
-import wanted1 from "@/assets/wanted-1.jpg";
-import wanted2 from "@/assets/wanted-2.jpg";
-import wanted3 from "@/assets/wanted-3.jpg";
-import wanted4 from "@/assets/wanted-4.jpg";
-import capsule1 from "@/assets/capsule-1.jpg";
-import capsule2 from "@/assets/capsule-2.jpg";
-import capsule3 from "@/assets/capsule-3.jpg";
-import capsule4 from "@/assets/capsule-4.jpg";
-import capsule5 from "@/assets/capsule-5.jpg";
-
-const productsQueryOptions = queryOptions({
-  queryKey: ["printify-products"],
-  queryFn: () => getPrintifyProducts(),
-  staleTime: 1000 * 60 * 5,
-});
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FLEEK Apparel — Built Different. Worn Different." },
-      { name: "description", content: "Luxury streetwear for those who refuse to blend in. Shop premium hoodies, tees, hats and joggers. Free shipping over $150." },
-      { property: "og:title", content: "FLEEK Apparel — Luxury Streetwear" },
-      { property: "og:description", content: "Built Different. Worn Different. Get FLEEK. Get Paid." },
-      { property: "og:url", content: "/" },
+      { title: "FLEEK Apparel // The Registry Is Closed" },
+      { name: "description", content: "Asset #11: The Guardian. Prepare for deployment. Enter the Registry for early access." },
+      { property: "og:title", content: "FLEEK Apparel // The Registry Is Closed" },
+      { property: "og:description", content: "Asset #11: The Guardian. Prepare for deployment." },
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(productsQueryOptions),
-  component: Index,
+  component: Blackout,
 });
 
-// Fallback (shown only if Printify returns nothing)
-const fallback: Product[] = [
-  { name: "Royalty Heavyweight Hoodie", category: "Hoodie", price: 189, rating: 5, reviews: 412, image: productHoodie, badge: "New" },
-  { name: "Signature Oversized Tee", category: "T-Shirt", price: 79, rating: 4.8, reviews: 638, image: productTee },
-  { name: "Monogram Snapback", category: "Hat", price: 65, rating: 4.9, reviews: 287, image: productHat },
-  { name: "Hustler Track Joggers", category: "Joggers", price: 149, rating: 4.7, reviews: 195, image: productJoggers, badge: "Hot" },
-];
+// June 12, 2026, 12:00 PM EST (UTC-5) => 17:00 UTC
+const TARGET = new Date("2026-06-12T17:00:00Z").getTime();
 
-function toProduct(p: StoreProduct, badge?: string): Product {
-  return {
-    name: p.name,
-    category: p.category,
-    price: p.price,
-    rating: p.rating,
-    reviews: p.reviews,
-    image: p.image,
-    badge,
-  };
+function useCountdown() {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const diff = Math.max(0, TARGET - now);
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const minutes = Math.floor((diff % 3600000) / 60000);
+  const seconds = Math.floor((diff % 60000) / 1000);
+  return { days, hours, minutes, seconds };
 }
 
-function Index() {
-  const { data: all } = useSuspenseQuery(productsQueryOptions);
-  const hasLive = all.length > 0;
-
-  const featuredMockups = [featured1, featured2, featured3, featured4];
-  const featured: Product[] = hasLive
-    ? all.slice(0, 4).map((p, i) => ({
-        ...toProduct(p, i === 0 ? "New" : i === 3 ? "Hot" : undefined),
-        image: featuredMockups[i] ?? p.image,
-      }))
-    : fallback;
-  const wantedMockups = [wanted1, wanted2, wanted3, wanted4];
-  const bestsellers: Product[] = hasLive
-    ? all.slice(0, 4).map((p, i) => ({ ...toProduct(p, `#${i + 1}`), image: wantedMockups[i] ?? p.image }))
-    : fallback.slice(0, 4).map((p, i) => ({ ...p, badge: `#${i + 1}`, image: wantedMockups[i] ?? p.image }));
-  const specialMockups = [special1, special2, special3];
-  const specialEdition: Product[] = hasLive
-    ? all.slice(5, 8).map((p, i) => ({ ...toProduct(p, "Special Edition"), image: specialMockups[i] ?? p.image }))
-    : fallback.slice(1, 4).map((p) => ({ ...p, badge: "Special Edition" }));
-
-  const goldenCapsule: Product[] = [
-    { name: "Defined By Darkness", category: "Collector Tee · 01/05", price: 220, rating: 5, reviews: 0, image: capsule1, badge: "01 / 05" },
-    { name: "Shadows Blueprint", category: "Collector Tee · 02/05", price: 220, rating: 5, reviews: 0, image: capsule2, badge: "02 / 05" },
-    { name: "Void Witness", category: "Collector Tee · 03/05", price: 220, rating: 5, reviews: 0, image: capsule3, badge: "03 / 05" },
-    { name: "No Reflection", category: "Collector Tee · 04/05", price: 220, rating: 5, reviews: 0, image: capsule4, badge: "04 / 05" },
-    { name: "Trained To Ignore", category: "Collector Tee · 05/05", price: 220, rating: 5, reviews: 0, image: capsule5, badge: "05 / 05" },
-  ];
-
+function Unit({ value, label }: { value: number; label: string }) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <SiteHeader />
-      <Hero />
-      <MarqueeBar />
-      <Featured items={featured} />
-      <BrandStory />
-      <BestSellers items={bestsellers} />
-      <SpecialEdition items={specialEdition} />
-      <GoldenCapsule items={goldenCapsule} />
-      <Featured items={featured} />
-      <BrandStory />
-      <BestSellers items={bestsellers} />
-      <SpecialEdition items={specialEdition} />
-      <SocialProof />
-      <EmailCapture />
-      <TrustBadges />
-      <SiteFooter />
-      <RegistryPopup />
-    </div>
-  );
-}
-
-
-
-function Hero() {
-  return (
-    <section className="relative min-h-[92vh] overflow-hidden">
-      <img
-        src={hero}
-        alt="FLEEK Apparel hero — luxury streetwear"
-        width={1080}
-        height={1920}
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/20 to-background" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/30 to-transparent" />
-
-      <div className="relative z-10 mx-auto flex min-h-[92vh] max-w-7xl flex-col justify-end px-4 pb-20 pt-32 md:px-8 md:pb-32">
-        <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 border border-gold/40 bg-background/40 backdrop-blur px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
-            <Sparkles className="h-3 w-3" /> FW26 Drop · Limited Run
-          </div>
-
-          <h1 className="mt-6 font-display text-[18vw] leading-[0.85] tracking-tight text-foreground md:text-[8.5rem]">
-            Built<br />
-            <span className="text-gradient-gold">Different.</span><br />
-            Worn Different.
-          </h1>
-
-          <p className="mt-6 max-w-md text-base text-muted-foreground md:text-lg">
-            Luxury streetwear for those who refuse to blend in. Engineered for hustlers, creators, and the relentless.
-          </p>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a href="#featured" className="group inline-flex items-center justify-center gap-2 bg-gold px-8 py-4 text-sm font-bold uppercase tracking-[0.2em] text-gold-foreground shadow-gold transition-all hover:scale-[1.02]">
-              Shop Now <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </a>
-            <a href="#featured" className="inline-flex items-center justify-center gap-2 border border-foreground/70 bg-background/30 backdrop-blur px-8 py-4 text-sm font-bold uppercase tracking-[0.2em] text-foreground hover:bg-foreground hover:text-background transition-colors">
-              New Arrivals
-            </a>
-          </div>
-        </div>
+    <div className="flex flex-col items-center">
+      <div className="font-display text-5xl md:text-7xl lg:text-8xl text-gradient-gold leading-none tabular-nums">
+        {String(value).padStart(2, "0")}
       </div>
-    </section>
-  );
-}
-
-function MarqueeBar() {
-  const items = ["Get FLEEK. Get Paid.", "★", "Built Different.", "★", "Worn Different.", "★", "Premium Streetwear.", "★", "Limited Drops.", "★"];
-  return (
-    <div className="border-y border-border bg-background overflow-hidden py-5">
-      <div className="flex whitespace-nowrap marquee">
-        {[...items, ...items, ...items, ...items].map((t, i) => (
-          <span key={i} className={`mx-6 font-display text-2xl tracking-[0.2em] ${t === "★" ? "text-gold" : "text-foreground/80"}`}>
-            {t}
-          </span>
-        ))}
+      <div className="mt-2 text-[10px] md:text-xs uppercase tracking-[0.35em] text-muted-foreground">
+        {label}
       </div>
     </div>
   );
 }
 
-function Featured({ items }: { items: Product[] }) {
-  return (
-    <section id="featured" className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
-      <div className="flex items-end justify-between gap-4 mb-10">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">The Collection</p>
-          <h2 className="mt-2 font-display text-5xl md:text-7xl text-foreground">Featured Drop</h2>
-        </div>
-        <a href="#" className="hidden md:inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground hover:text-gold">
-          View All <ArrowRight className="h-3.5 w-3.5" />
-        </a>
-      </div>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
-        {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
-      </div>
-    </section>
-  );
-}
+function Blackout() {
+  const { days, hours, minutes, seconds } = useCountdown();
 
-function BrandStory() {
   return (
-    <section id="story" className="relative border-y border-border bg-card">
-      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-32 grid md:grid-cols-2 gap-12 items-center">
-        <div className="relative aspect-square md:aspect-[4/5] overflow-hidden">
-          <img src={lifestyle2} alt="FLEEK movement" loading="lazy" className="h-full w-full object-cover" />
-          <div className="absolute bottom-4 left-4 right-4 bg-background/85 backdrop-blur px-5 py-4 border-l-2 border-gold">
-            <p className="font-display text-2xl text-gold">"Get FLEEK. Get Paid."</p>
-          </div>
+    <main className="min-h-screen bg-background text-foreground flex items-center justify-center px-4 py-16 md:py-24">
+      <div className="w-full max-w-3xl mx-auto text-center">
+        <div className="inline-flex items-center gap-2 border border-gold/40 bg-background/40 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-gold">
+          ◆ Blackout Protocol
         </div>
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Our Story</p>
-          <h2 className="mt-3 font-display text-5xl md:text-7xl leading-[0.9] text-foreground">
-            More Than<br /><span className="text-gradient-gold">Clothing.</span>
-          </h2>
-          <p className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed">
-            FLEEK represents ambition, hustle, confidence, and success. Every piece is designed for those chasing greatness — built from premium fabrics, finished with gold detailing, and made to outlast the trend cycle.
+
+        <h1 className="mt-8 font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight">
+          FLEEK APPAREL
+          <span className="block text-gold mt-2">// THE REGISTRY IS CLOSED</span>
+        </h1>
+
+        <div className="mt-12 md:mt-16 flex items-start justify-center gap-4 md:gap-10">
+          <Unit value={days} label="Days" />
+          <div className="font-display text-5xl md:text-7xl lg:text-8xl text-gold/40 leading-none">:</div>
+          <Unit value={hours} label="Hours" />
+          <div className="font-display text-5xl md:text-7xl lg:text-8xl text-gold/40 leading-none">:</div>
+          <Unit value={minutes} label="Minutes" />
+          <div className="font-display text-5xl md:text-7xl lg:text-8xl text-gold/40 leading-none">:</div>
+          <Unit value={seconds} label="Seconds" />
+        </div>
+        <p className="mt-4 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+          Deployment · June 12, 2026 · 12:00 PM EST
+        </p>
+
+        <div className="mt-14 md:mt-20 border-y border-gold/30 py-8">
+          <p className="font-display text-2xl md:text-4xl tracking-[0.15em] text-foreground">
+            ASSET <span className="text-gold">#11</span>: THE GUARDIAN.
           </p>
-          <div className="mt-8 grid grid-cols-3 gap-4 border-t border-border pt-6">
-            <Stat n="250K+" l="Customers" />
-            <Stat n="4.9★" l="Avg Rating" />
-            <Stat n="48hr" l="Shipping" />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Stat({ n, l }: { n: string; l: string }) {
-  return (
-    <div>
-      <div className="font-display text-3xl md:text-4xl text-gold">{n}</div>
-      <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{l}</div>
-    </div>
-  );
-}
-
-function BestSellers({ items }: { items: Product[] }) {
-  return (
-    <section id="bestsellers" className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-2 text-gold mb-3">
-          <Flame className="h-4 w-4" />
-          <p className="text-[11px] font-semibold uppercase tracking-[0.25em]">Top Selling</p>
-          <Flame className="h-4 w-4" />
-        </div>
-        <h2 className="font-display text-6xl md:text-8xl text-foreground">Most Wanted</h2>
-      </div>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
-        {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
-      </div>
-    </section>
-  );
-}
-
-
-
-function SpecialEdition({ items }: { items: Product[] }) {
-  if (!items.length) return null;
-  return (
-    <section id="special-edition" className="relative border-y border-gold/30 bg-gradient-to-b from-background via-card/40 to-background">
-      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 border border-gold/40 bg-background/40 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold mb-4">
-            <Sparkles className="h-3 w-3" /> Limited Release
-          </div>
-          <h2 className="font-display text-5xl md:text-7xl text-foreground">
-            Special <span className="text-gradient-gold">Edition</span>
-          </h2>
-          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
-            Exclusive white-on-white drops. Crafted in limited quantities for the few who move different.
+          <p className="mt-2 font-display text-2xl md:text-4xl tracking-[0.15em] text-muted-foreground">
+            PREPARE FOR DEPLOYMENT.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-3">
-          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
 
-function GoldenCapsule({ items }: { items: Product[] }) {
-  if (!items.length) return null;
-  return (
-    <section id="golden-capsule" className="relative border-y border-gold/40 bg-gradient-to-b from-background via-[#0a0805] to-background">
-      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 border border-gold/50 bg-gold/5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold mb-4">
-            <Sparkles className="h-3 w-3" /> Collector Edition · 5 Pieces Only
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          className="mt-14 md:mt-20 mx-auto max-w-xl"
+        >
+          <label htmlFor="registry-email" className="block text-[11px] uppercase tracking-[0.35em] text-gold mb-4">
+            Enter the Registry for Early Access
+          </label>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              id="registry-email"
+              type="email"
+              required
+              placeholder="your@email.com"
+              className="flex-1 bg-card border border-border px-5 py-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold transition-colors text-center sm:text-left"
+            />
+            <button
+              type="submit"
+              className="bg-gold px-8 py-4 text-xs font-bold uppercase tracking-[0.3em] text-gold-foreground hover:scale-[1.02] transition-transform"
+            >
+              Enlist
+            </button>
           </div>
-          <h2 className="font-display text-5xl md:text-7xl text-foreground">
-            Golden <span className="text-gradient-gold">Capsule</span>
-          </h2>
-          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
-            Archival collector pieces, sealed and numbered. Each tee enshrined in a brushed-gold vault — built for the few who collect, not just wear.
+          <p className="mt-4 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            Encrypted · No Spam · Registry Members Only
           </p>
-        </div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-5 md:gap-x-6">
-          {items.map((p, i) => <ProductCard key={`${p.name}-${i}`} product={p} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-
-function SocialProof() {
-  const reviews = [
-    { name: "Marcus T.", text: "Quality is insane. The hoodie feels like luxury — getting compliments every day.", stars: 5 },
-    { name: "Aisha R.", text: "The fit is unmatched. FLEEK actually delivers on the premium promise.", stars: 5 },
-    { name: "Damien K.", text: "Bought 3 pieces, will be buying 30 more. This brand is on another level.", stars: 5 },
-  ];
-  return (
-    <section className="border-y border-border bg-card/40">
-      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
-        <div className="text-center mb-12">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">The Movement</p>
-          <h2 className="mt-2 font-display text-5xl md:text-7xl text-foreground">#WearFLEEK</h2>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2 md:gap-4 mb-14">
-          {[lifestyle1, lifestyle2, lifestyle3].map((src, i) => (
-            <div key={i} className="relative aspect-square overflow-hidden group">
-              <img src={src} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-background/0 group-hover:bg-background/40 transition-colors flex items-center justify-center">
-                <span className="text-gold opacity-0 group-hover:opacity-100 transition-opacity text-xs uppercase tracking-widest font-semibold">@fleek.apparel</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {reviews.map((r) => (
-            <div key={r.name} className="border border-border bg-background p-6">
-              <div className="flex gap-0.5 text-gold mb-3">
-                {Array.from({ length: r.stars }).map((_, i) => <span key={i}>★</span>)}
-              </div>
-              <p className="text-sm text-foreground leading-relaxed">"{r.text}"</p>
-              <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">— {r.name} · Verified Buyer</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-
-function EmailCapture() {
-  return (
-    <section className="relative overflow-hidden border-y border-border">
-      <img src={lifestyle3} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-      <div className="absolute inset-0 bg-background/80" />
-      <div className="relative mx-auto max-w-3xl px-4 py-20 md:px-8 md:py-28 text-center">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold">Join The Movement</p>
-        <h2 className="mt-3 font-display text-5xl md:text-7xl text-foreground">
-          Get <span className="text-gradient-gold">15% Off</span><br />Your First Order
-        </h2>
-        <p className="mt-5 text-muted-foreground">Early access to drops. VIP-only deals. No spam — just heat.</p>
-
-        <form className="mt-8 mx-auto max-w-md space-y-3" onSubmit={(e) => e.preventDefault()}>
-          <input
-            type="email"
-            placeholder="Your email address"
-            className="w-full bg-card border border-border px-5 py-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold transition-colors"
-          />
-          <input
-            type="tel"
-            placeholder="Phone (for SMS drops)"
-            className="w-full bg-card border border-border px-5 py-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold transition-colors"
-          />
-          <button className="w-full bg-gold px-8 py-4 text-sm font-bold uppercase tracking-[0.2em] text-gold-foreground hover:scale-[1.01] transition-transform">
-            Unlock 15% Off
-          </button>
         </form>
-        <p className="mt-4 text-[10px] uppercase tracking-widest text-muted-foreground">By signing up you agree to receive marketing. Unsubscribe anytime.</p>
       </div>
-    </section>
-  );
-}
-
-function TrustBadges() {
-  const items = [
-    { icon: Truck, t: "Free Shipping", s: "On orders over $150" },
-    { icon: RotateCcw, t: "30-Day Returns", s: "No questions asked" },
-    { icon: ShieldCheck, t: "Secure Checkout", s: "Encrypted payments" },
-    { icon: Sparkles, t: "Premium Quality", s: "Crafted to last" },
-  ];
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-14 md:px-8">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {items.map(({ icon: Icon, t, s }) => (
-          <div key={t} className="flex items-start gap-3">
-            <Icon className="h-6 w-6 text-gold shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-semibold text-foreground">{t}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{s}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
+    </main>
   );
 }
