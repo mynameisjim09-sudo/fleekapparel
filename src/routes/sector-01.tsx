@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SectorNav } from "@/components/sector-nav";
 import symbolsAsset from "@/assets/fleek-symbols.png.asset.json";
 import wanted1 from "@/assets/wanted-1.jpg";
 import wanted2 from "@/assets/wanted-2.jpg";
@@ -71,6 +72,8 @@ const SECTIONS: SymbolSection[] = [
 
 function Sector01() {
   return (
+    <>
+    <SectorNav />
     <main className="min-h-screen bg-background text-foreground">
       {/* Hero header */}
       <section className="border-b border-gold/20 px-6 pt-20 pb-12 text-center">
@@ -171,5 +174,6 @@ function Sector01() {
         </p>
       </footer>
     </main>
+    </>
   );
 }

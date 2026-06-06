@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SectorNav } from "@/components/sector-nav";
 import { useEffect, useState } from "react";
 import wanted1 from "@/assets/wanted-1.jpg";
 import wanted2 from "@/assets/wanted-2.jpg";
@@ -124,6 +125,8 @@ function Sector03() {
   const { days, hours, minutes, seconds, ready } = useCountdown();
 
   return (
+    <>
+    <SectorNav />
     <main className="min-h-screen bg-[#0c0c0c] text-[#e5e5e5] relative overflow-hidden">
       {/* Blueprint grid background */}
       <div
@@ -307,5 +310,6 @@ function Sector03() {
         </p>
       </footer>
     </main>
+    </>
   );
 }
