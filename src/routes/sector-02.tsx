@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SectorNav } from "@/components/sector-nav";
 import capsule1 from "@/assets/capsule-1.jpg";
 import capsule2 from "@/assets/capsule-2.jpg";
 import capsule3 from "@/assets/capsule-3.jpg";
@@ -76,6 +77,8 @@ const ASSETS: VoidAsset[] = [
 
 function Sector02() {
   return (
+    <>
+    <SectorNav />
     <main className="min-h-screen bg-[#0a0a0a] text-[#e5e5e5] relative overflow-hidden">
       {/* Scanline overlay */}
       <div
@@ -262,5 +265,6 @@ function Sector02() {
         }
       `}</style>
     </main>
+    </>
   );
 }

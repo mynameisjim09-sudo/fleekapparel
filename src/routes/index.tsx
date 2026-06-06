@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { SectorNav } from "@/components/sector-nav";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -74,7 +75,9 @@ function Blackout() {
   };
 
   return (
-    <main className="min-h-screen bg-background text-foreground flex items-center justify-center px-4 py-16 md:py-24">
+    <>
+    <SectorNav />
+    <main className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center px-4 py-16 md:py-24">
       <div className="w-full max-w-3xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 border border-gold/40 bg-background/40 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-gold">
           ◆ Blackout Protocol
@@ -142,7 +145,17 @@ function Blackout() {
             Encrypted · No Spam · Registry Members Only
           </p>
         </form>
+
+        <div className="mt-16">
+          <Link
+            to="/vault"
+            className="inline-flex items-center gap-2 border border-gold/40 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.3em] text-gold hover:bg-gold hover:text-gold-foreground transition-colors"
+          >
+            Enter the Vault →
+          </Link>
+        </div>
       </div>
     </main>
+    </>
   );
 }
