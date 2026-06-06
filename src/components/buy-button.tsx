@@ -5,11 +5,7 @@ import { createCheckoutSession } from "@/lib/checkout.functions";
 import { toast } from "sonner";
 
 interface BuyButtonProps {
-  name: string;
-  description?: string;
-  /** Price in USD (e.g. 49.99) */
-  price: number;
-  image?: string;
+  priceId: string;
   quantity?: number;
   className?: string;
   children?: React.ReactNode;
@@ -18,13 +14,10 @@ interface BuyButtonProps {
 }
 
 export function BuyButton({
-  name,
-  description,
-  price,
-  image,
+  priceId,
   quantity = 1,
   className,
-  children,
+  children = "Buy Now",
   variant = "default",
   size = "default",
 }: BuyButtonProps) {
@@ -32,21 +25,13 @@ export function BuyButton({
   const checkout = useServerFn(createCheckoutSession);
 
   const handleClick = async () => {
+    if (!priceId) {
+      toast.error("This product is not yet available for purchase.");
+      return;
+    }
     setLoading(true);
     try {
-      const { url } = await checkout({
-        data: {
-          items: [
-            {
-              name,
-              description,
-              image,
-              quantity,
-              amount: Math.round(price * 100),
-            },
-          ],
-        },
-      });
+      const { url } = await checkout({ data: { items: [{ priceId, quantity }] } });
       window.location.href = url;
     } catch (err) {
       console.error(err);
@@ -56,14 +41,8 @@ export function BuyButton({
   };
 
   return (
-    <Button
-      onClick={handleClick}
-      disabled={loading}
-      variant={variant}
-      size={size}
-      className={className}
-    >
-      {loading ? "Loading…" : children ?? `Buy — $${price.toFixed(2)}`}
+    <Button onClick={handleClick} disabled={loading || !priceId} variant={variant} size={size} className={className}>
+      {loading ? "Loading…" : children}
     </Button>
   );
 }
