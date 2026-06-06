@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Sector02RouteImport } from './routes/sector-02'
 import { Route as Sector01RouteImport } from './routes/sector-01'
 import { Route as IndexRouteImport } from './routes/index'
 
+const Sector02Route = Sector02RouteImport.update({
+  id: '/sector-02',
+  path: '/sector-02',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Sector01Route = Sector01RouteImport.update({
   id: '/sector-01',
   path: '/sector-01',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sector-01': typeof Sector01Route
+  '/sector-02': typeof Sector02Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sector-01': typeof Sector01Route
+  '/sector-02': typeof Sector02Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/sector-01': typeof Sector01Route
+  '/sector-02': typeof Sector02Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sector-01'
+  fullPaths: '/' | '/sector-01' | '/sector-02'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sector-01'
-  id: '__root__' | '/' | '/sector-01'
+  to: '/' | '/sector-01' | '/sector-02'
+  id: '__root__' | '/' | '/sector-01' | '/sector-02'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   Sector01Route: typeof Sector01Route
+  Sector02Route: typeof Sector02Route
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sector-02': {
+      id: '/sector-02'
+      path: '/sector-02'
+      fullPath: '/sector-02'
+      preLoaderRoute: typeof Sector02RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sector-01': {
       id: '/sector-01'
       path: '/sector-01'
@@ -71,7 +88,18 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   Sector01Route: Sector01Route,
+  Sector02Route: Sector02Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
