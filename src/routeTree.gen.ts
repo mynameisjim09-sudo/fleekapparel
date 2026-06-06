@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Sector03RouteImport } from './routes/sector-03'
 import { Route as Sector02RouteImport } from './routes/sector-02'
 import { Route as Sector01RouteImport } from './routes/sector-01'
 import { Route as IndexRouteImport } from './routes/index'
 
+const Sector03Route = Sector03RouteImport.update({
+  id: '/sector-03',
+  path: '/sector-03',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Sector02Route = Sector02RouteImport.update({
   id: '/sector-02',
   path: '/sector-02',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sector-01': typeof Sector01Route
   '/sector-02': typeof Sector02Route
+  '/sector-03': typeof Sector03Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sector-01': typeof Sector01Route
   '/sector-02': typeof Sector02Route
+  '/sector-03': typeof Sector03Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/sector-01': typeof Sector01Route
   '/sector-02': typeof Sector02Route
+  '/sector-03': typeof Sector03Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sector-01' | '/sector-02'
+  fullPaths: '/' | '/sector-01' | '/sector-02' | '/sector-03'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sector-01' | '/sector-02'
-  id: '__root__' | '/' | '/sector-01' | '/sector-02'
+  to: '/' | '/sector-01' | '/sector-02' | '/sector-03'
+  id: '__root__' | '/' | '/sector-01' | '/sector-02' | '/sector-03'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   Sector01Route: typeof Sector01Route
   Sector02Route: typeof Sector02Route
+  Sector03Route: typeof Sector03Route
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sector-03': {
+      id: '/sector-03'
+      path: '/sector-03'
+      fullPath: '/sector-03'
+      preLoaderRoute: typeof Sector03RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sector-02': {
       id: '/sector-02'
       path: '/sector-02'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   Sector01Route: Sector01Route,
   Sector02Route: Sector02Route,
+  Sector03Route: Sector03Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
