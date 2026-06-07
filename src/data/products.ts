@@ -26,7 +26,7 @@ export const isAnchorTier = (p: Pick<Product, "description" | "sector">) =>
 export const products: Product[] = [
   // ── Archive & Void Sectors ─────────────────────────────────────────
   { id: "guardian",          name: "ASSET #11: THE GUARDIAN",   description: "Archive Sector — Special Edition", image: "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front", price: 120, priceId: "price_1TfUeeGzB8859BjADPpsOQqE", sector: "archive-void" },
-  { id: "void-01",           name: "FORBIDDEN HEART // VOID 01", description: "Void Sector",         image: "", price: 55, priceId: "", sector: "archive-void" },
+  { id: "void-01",           name: "FORBIDDEN HEART // VOID 01", description: "Void Sector",         image: "https://images.printify.com/mockup/6a1c2a664525ffd57310b268/247319/127573/forbidden-heart-void-01.jpg?camera_label=front", price: 65, priceId: "price_1TfUlbGzB8859BjAqVGDbZpv", sector: "archive-void" },
   { id: "void-02",           name: "FORBIDDEN HEART // VOID 02", description: "Void Sector",         image: "", price: 55, priceId: "", sector: "archive-void" },
   { id: "void-03",           name: "FORBIDDEN HEART // VOID 03", description: "Void Sector",         image: "", price: 55, priceId: "", sector: "archive-void" },
   { id: "bushido-skull",     name: "BUSHIDO SKULL",              description: "Archive Sector",      image: "", price: 65, priceId: "", sector: "archive-void" },
