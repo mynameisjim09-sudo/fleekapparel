@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { SectorNav } from "@/components/sector-nav";
 import { products } from "@/data/products";
 import { ArrowRight, Send } from "lucide-react";
+import { logConsensusFeedback } from "@/lib/consensus.functions";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -51,6 +53,9 @@ function Battle({
   const [selected, setSelected] = useState<Side | null>(null);
   const [feedback, setFeedback] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const logFeedback = useServerFn(logConsensusFeedback);
 
   const sum = votes.a + votes.b;
   const pctA = Math.round((votes.a / sum) * 100);
@@ -66,25 +71,27 @@ function Battle({
     setSelected(null);
     setFeedback("");
     setSubmitted(false);
+    setError(null);
     onNext();
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!feedback.trim()) return;
-    // Persist locally — surrogate for the data goal until backend wired
+    if (!feedback.trim() || !selected) return;
+    setSending(true);
+    setError(null);
+    const winner = selected === "A" ? a.name : b.name;
+    const loser = selected === "A" ? b.name : a.name;
+    const note = feedback.trim().slice(0, 280);
     try {
-      const key = "fleek.consensus.feedback";
-      const prior = JSON.parse(localStorage.getItem(key) || "[]");
-      prior.push({
-        ts: Date.now(),
-        winner: selected === "A" ? a.id : b.id,
-        loser: selected === "A" ? b.id : a.id,
-        note: feedback.trim().slice(0, 280),
-      });
-      localStorage.setItem(key, JSON.stringify(prior.slice(-200)));
-    } catch {}
-    setSubmitted(true);
+      await logFeedback({ data: { winner, loser, feedback: note } });
+      setSubmitted(true);
+    } catch (err) {
+      setError("Transmission failed. Retry.");
+      console.error(err);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
