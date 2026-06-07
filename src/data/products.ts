@@ -16,7 +16,7 @@ export interface Product {
  */
 export const products: Product[] = [
   // ── Archive & Void Sectors ─────────────────────────────────────────
-  { id: "guardian",          name: "ASSET #11: THE GUARDIAN",   description: "Archive Sector",       image: "", price: 85, priceId: "", sector: "archive-void" },
+  { id: "guardian",          name: "ASSET #11: THE GUARDIAN",   description: "Archive Sector",       image: "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front", price: 85, priceId: "price_1TfUTJGzB8859BjAqzRSRVIt", sector: "archive-void" },
   { id: "void-01",           name: "FORBIDDEN HEART // VOID 01", description: "Void Sector",         image: "", price: 55, priceId: "", sector: "archive-void" },
   { id: "void-02",           name: "FORBIDDEN HEART // VOID 02", description: "Void Sector",         image: "", price: 55, priceId: "", sector: "archive-void" },
   { id: "void-03",           name: "FORBIDDEN HEART // VOID 03", description: "Void Sector",         image: "", price: 55, priceId: "", sector: "archive-void" },
