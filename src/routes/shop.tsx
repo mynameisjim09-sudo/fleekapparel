@@ -155,15 +155,20 @@ function Battle({
             />
             <button
               type="submit"
-              disabled={!feedback.trim()}
+              disabled={!feedback.trim() || sending}
               className="ml-3 flex h-10 items-center gap-2 px-3 font-mono text-[10px] uppercase tracking-[0.35em] text-foreground transition-colors hover:text-gold disabled:opacity-30"
             >
-              Transmit <Send className="h-3.5 w-3.5" />
+              {sending ? "Transmitting…" : "Transmit"} <Send className="h-3.5 w-3.5" />
             </button>
           </div>
           <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.3em] text-[#555]">
             {feedback.length}/280 · routed to production intel
           </p>
+          {error && (
+            <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.3em] text-red-500">
+              {error}
+            </p>
+          )}
         </form>
       )}
 
