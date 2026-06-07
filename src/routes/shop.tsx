@@ -52,7 +52,11 @@ function Battle({
   const [votes, setVotes] = useState<{ a: number; b: number }>({ a: seed[0], b: seed[1] });
   const [selected, setSelected] = useState<Side | null>(null);
   const [feedback, setFeedback] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [user, setUser] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return window.localStorage.getItem("fleek_operative") ?? "";
+  });
+  const [submittedUser, setSubmittedUser] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const logFeedback = useServerFn(logConsensusFeedback);
@@ -61,16 +65,25 @@ function Battle({
   const pctA = Math.round((votes.a / sum) * 100);
   const pctB = 100 - pctA;
 
+  // Registry Stage 01–07 (cycles if more pairs exist)
+  const registryStage = String((pairIndex % 7) + 1).padStart(2, "0");
+
   const vote = (side: Side) => {
     if (selected) return;
     setSelected(side);
     setVotes((v) => (side === "A" ? { ...v, a: v.a + 1 } : { ...v, b: v.b + 1 }));
+    const winner = side === "A" ? a.name : b.name;
+    const loser = side === "A" ? b.name : a.name;
+    // Fire-and-forget VOTE event (no PII unless user already saved one)
+    logFeedback({
+      data: { event: "VOTE", registryStage, winner, loser, feedback: "", user: user.trim() },
+    }).catch((err) => console.error("vote log failed", err));
   };
 
   const reset = () => {
     setSelected(null);
     setFeedback("");
-    setSubmitted(false);
+    setSubmittedUser(null);
     setError(null);
     onNext();
   };
@@ -83,9 +96,22 @@ function Battle({
     const winner = selected === "A" ? a.name : b.name;
     const loser = selected === "A" ? b.name : a.name;
     const note = feedback.trim().slice(0, 280);
+    const operative = user.trim().slice(0, 120);
     try {
-      await logFeedback({ data: { winner, loser, feedback: note } });
-      setSubmitted(true);
+      await logFeedback({
+        data: {
+          event: "FEEDBACK",
+          registryStage,
+          winner,
+          loser,
+          feedback: note,
+          user: operative,
+        },
+      });
+      if (operative && typeof window !== "undefined") {
+        window.localStorage.setItem("fleek_operative", operative);
+      }
+      setSubmittedUser(operative || "OPERATIVE");
     } catch (err) {
       setError("Transmission failed. Retry.");
       console.error(err);
@@ -93,6 +119,8 @@ function Battle({
       setSending(false);
     }
   };
+
+  const submitted = submittedUser !== null;
 
   return (
     <section className="relative z-10 mx-auto max-w-7xl px-6 pb-24">
