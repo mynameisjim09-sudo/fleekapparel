@@ -52,7 +52,11 @@ function Battle({
   const [votes, setVotes] = useState<{ a: number; b: number }>({ a: seed[0], b: seed[1] });
   const [selected, setSelected] = useState<Side | null>(null);
   const [feedback, setFeedback] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [user, setUser] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return window.localStorage.getItem("fleek_operative") ?? "";
+  });
+  const [submittedUser, setSubmittedUser] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const logFeedback = useServerFn(logConsensusFeedback);
@@ -61,16 +65,25 @@ function Battle({
   const pctA = Math.round((votes.a / sum) * 100);
   const pctB = 100 - pctA;
 
+  // Registry Stage 01–07 (cycles if more pairs exist)
+  const registryStage = String((pairIndex % 7) + 1).padStart(2, "0");
+
   const vote = (side: Side) => {
     if (selected) return;
     setSelected(side);
     setVotes((v) => (side === "A" ? { ...v, a: v.a + 1 } : { ...v, b: v.b + 1 }));
+    const winner = side === "A" ? a.name : b.name;
+    const loser = side === "A" ? b.name : a.name;
+    // Fire-and-forget VOTE event (no PII unless user already saved one)
+    logFeedback({
+      data: { event: "VOTE", registryStage, winner, loser, feedback: "", user: user.trim() },
+    }).catch((err) => console.error("vote log failed", err));
   };
 
   const reset = () => {
     setSelected(null);
     setFeedback("");
-    setSubmitted(false);
+    setSubmittedUser(null);
     setError(null);
     onNext();
   };
@@ -83,9 +96,22 @@ function Battle({
     const winner = selected === "A" ? a.name : b.name;
     const loser = selected === "A" ? b.name : a.name;
     const note = feedback.trim().slice(0, 280);
+    const operative = user.trim().slice(0, 120);
     try {
-      await logFeedback({ data: { winner, loser, feedback: note } });
-      setSubmitted(true);
+      await logFeedback({
+        data: {
+          event: "FEEDBACK",
+          registryStage,
+          winner,
+          loser,
+          feedback: note,
+          user: operative,
+        },
+      });
+      if (operative && typeof window !== "undefined") {
+        window.localStorage.setItem("fleek_operative", operative);
+      }
+      setSubmittedUser(operative || "OPERATIVE");
     } catch (err) {
       setError("Transmission failed. Retry.");
       console.error(err);
@@ -93,6 +119,8 @@ function Battle({
       setSending(false);
     }
   };
+
+  const submitted = submittedUser !== null;
 
   return (
     <section className="relative z-10 mx-auto max-w-7xl px-6 pb-24">
@@ -161,8 +189,23 @@ function Battle({
               {sending ? "Transmitting…" : "Transmit"} <Send className="h-3.5 w-3.5" />
             </button>
           </div>
-          <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.3em] text-[#555]">
-            {feedback.length}/280 · routed to production intel
+
+          {/* Optional operative identifier */}
+          <div className="mt-5 flex items-center border-b border-foreground/15 focus-within:border-gold/60">
+            <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-[#555]">
+              Operative ID
+            </span>
+            <input
+              value={user}
+              onChange={(e) => setUser(e.target.value)}
+              maxLength={120}
+              placeholder="callsign or email (optional)"
+              className="ml-4 h-10 w-full bg-transparent text-xs tracking-wide text-foreground placeholder:text-[#3a3a3a] focus:outline-none"
+            />
+          </div>
+
+          <p className="mt-3 font-mono text-[9px] uppercase tracking-[0.3em] text-[#555]">
+            {feedback.length}/280 · Registry Stage {registryStage} · secure transmission
           </p>
           {error && (
             <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.3em] text-red-500">
@@ -173,16 +216,19 @@ function Battle({
       )}
 
       {submitted && (
-        <div className="mt-10 flex flex-col items-center gap-5 border border-gold/30 bg-[#0a0a0a] px-6 py-8 text-center animate-in fade-in duration-500">
-          <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-gold">
-            Transmission Logged
+        <div className="mt-10 flex flex-col items-center gap-5 border border-gold/40 bg-[#0a0a0a] px-6 py-10 text-center shadow-[0_0_40px_-12px_rgba(212,175,55,0.45)] animate-in fade-in duration-500">
+          <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-gold/80">
+            // Registry · Stage {registryStage}
           </p>
-          <p className="max-w-xl text-sm text-muted-foreground">
-            Your intel will weigh on the June 12 deployment. Stand by for the next briefing.
+          <p className="font-display text-2xl tracking-[0.18em] text-gold sm:text-3xl">
+            DATA LOGGED TO REGISTRY.
+          </p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-gold">
+            Thank you, {submittedUser}.
           </p>
           <button
             onClick={reset}
-            className="group inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.4em] text-foreground"
+            className="group mt-2 inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.4em] text-foreground"
           >
             Next Battle
             <span className="h-px w-10 bg-foreground transition-all group-hover:w-20 group-hover:bg-gold" />

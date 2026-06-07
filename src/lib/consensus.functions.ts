@@ -2,13 +2,16 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const SHEET_ID = "1jJZVWKXZwdiMrC2UPxNMm4FH1F-fqdaB5t3WTGpAuv4";
-const RANGE = "Sheet1!A:D";
+const RANGE = "Consensus!A:G";
 const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
 
 const Input = z.object({
+  event: z.enum(["VOTE", "FEEDBACK"]),
+  registryStage: z.string().min(1).max(8),
   winner: z.string().min(1).max(200),
   loser: z.string().min(1).max(200),
-  feedback: z.string().min(1).max(280),
+  feedback: z.string().max(280).optional().default(""),
+  user: z.string().max(120).optional().default(""),
 });
 
 export const logConsensusFeedback = createServerFn({ method: "POST" })
@@ -30,7 +33,17 @@ export const logConsensusFeedback = createServerFn({ method: "POST" })
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        values: [[new Date().toISOString(), data.winner, data.loser, data.feedback]],
+        values: [
+          [
+            new Date().toISOString(),
+            data.event,
+            data.registryStage,
+            data.winner,
+            data.loser,
+            data.feedback,
+            data.user,
+          ],
+        ],
       }),
     });
 
