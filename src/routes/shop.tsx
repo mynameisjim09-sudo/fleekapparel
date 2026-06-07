@@ -189,8 +189,23 @@ function Battle({
               {sending ? "Transmitting…" : "Transmit"} <Send className="h-3.5 w-3.5" />
             </button>
           </div>
-          <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.3em] text-[#555]">
-            {feedback.length}/280 · routed to production intel
+
+          {/* Optional operative identifier */}
+          <div className="mt-5 flex items-center border-b border-foreground/15 focus-within:border-gold/60">
+            <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-[#555]">
+              Operative ID
+            </span>
+            <input
+              value={user}
+              onChange={(e) => setUser(e.target.value)}
+              maxLength={120}
+              placeholder="callsign or email (optional)"
+              className="ml-4 h-10 w-full bg-transparent text-xs tracking-wide text-foreground placeholder:text-[#3a3a3a] focus:outline-none"
+            />
+          </div>
+
+          <p className="mt-3 font-mono text-[9px] uppercase tracking-[0.3em] text-[#555]">
+            {feedback.length}/280 · Registry Stage {registryStage} · secure transmission
           </p>
           {error && (
             <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.3em] text-red-500">
@@ -201,16 +216,19 @@ function Battle({
       )}
 
       {submitted && (
-        <div className="mt-10 flex flex-col items-center gap-5 border border-gold/30 bg-[#0a0a0a] px-6 py-8 text-center animate-in fade-in duration-500">
-          <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-gold">
-            Transmission Logged
+        <div className="mt-10 flex flex-col items-center gap-5 border border-gold/40 bg-[#0a0a0a] px-6 py-10 text-center shadow-[0_0_40px_-12px_rgba(212,175,55,0.45)] animate-in fade-in duration-500">
+          <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-gold/80">
+            // Registry · Stage {registryStage}
           </p>
-          <p className="max-w-xl text-sm text-muted-foreground">
-            Your intel will weigh on the June 12 deployment. Stand by for the next briefing.
+          <p className="font-display text-2xl tracking-[0.18em] text-gold sm:text-3xl">
+            DATA LOGGED TO REGISTRY.
+          </p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-gold">
+            Thank you, {submittedUser}.
           </p>
           <button
             onClick={reset}
-            className="group inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.4em] text-foreground"
+            className="group mt-2 inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.4em] text-foreground"
           >
             Next Battle
             <span className="h-px w-10 bg-foreground transition-all group-hover:w-20 group-hover:bg-gold" />
