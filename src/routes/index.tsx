@@ -5,6 +5,10 @@ import { SectorNav } from "@/components/sector-nav";
 import { BuyButton } from "@/components/buy-button";
 import { products, HOODIE_ANCHOR_PRICE } from "@/data/products";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import architectFrontAsset from "@/assets/carousel/architect-front.png.asset.json";
+import dragonFrontAsset from "@/assets/carousel/dragon-front.png.asset.json";
+import skullFrontAsset from "@/assets/carousel/skull-front.png.asset.json";
+import architectBackAsset from "@/assets/carousel/architect-back.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -298,10 +302,7 @@ function VariantRow({
 }
 
 // ── Slow-Drift Infinite Carousel (Letterbox film strip) ───────────────
-import architectFrontAsset from "@/assets/carousel/architect-front.png.asset.json";
-import dragonFrontAsset from "@/assets/carousel/dragon-front.png.asset.json";
-import skullFrontAsset from "@/assets/carousel/skull-front.png.asset.json";
-import architectBackAsset from "@/assets/carousel/architect-back.png.asset.json";
+
 
 const FILMSTRIP = [
   {
