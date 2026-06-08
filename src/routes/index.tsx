@@ -356,7 +356,7 @@ function FilmStrip() {
 
       {/* Reel */}
       <div className="group relative h-[28vh] min-h-[200px] md:h-[34vh] md:min-h-[260px]">
-        <div className="filmstrip-track absolute inset-y-0 left-0 flex items-center gap-4 md:gap-6">
+        <div className="filmstrip-track absolute inset-y-0 left-0 flex items-center gap-[40px]">
           {reel.map((f, i) => (
             <figure
               key={`${f.id}-${i}`}
