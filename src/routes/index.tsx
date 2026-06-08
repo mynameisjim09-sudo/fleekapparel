@@ -300,28 +300,25 @@ function VariantRow({
 // ── Slow-Drift Infinite Carousel (Letterbox film strip) ───────────────
 const FILMSTRIP = [
   {
-    id: "ronin-front",
-    label: "001 · FRONT",
-    title: "FLEEK CREST",
-    src: "https://images.printify.com/mockup/6a24d3ccac2a0369d80cfad3/111248/105309/the-eternal-ronin-special-edition-archive.jpg?camera_label=front",
-  },
-  {
-    id: "architect-back",
-    label: "002 · BACK",
-    title: "ARCHITECT JUMBO",
-    src: "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=back",
-  },
-  {
     id: "architect-front",
-    label: "002 · FRONT",
-    title: "FLEEK CREST",
+    label: "STAGE 02 · STRUCTURE",
+    title: "THE ARCHITECT",
     src: "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front",
+    encrypted: false,
   },
   {
-    id: "ronin-back",
-    label: "001 · BACK",
-    title: "RONIN JUMBO",
-    src: "https://images.printify.com/mockup/6a24d3ccac2a0369d80cfad3/111248/105309/the-eternal-ronin-special-edition-archive.jpg?camera_label=back",
+    id: "dragon-front",
+    label: "STAGE 03 · POWER",
+    title: "THE DRAGON",
+    src: "https://images.printify.com/mockup/6a2412ff50a21acce208b01b/117441/127480/dragon-blade-flaming-archive.jpg?camera_label=front",
+    encrypted: true,
+  },
+  {
+    id: "skull-front",
+    label: "STAGE 04 · LEGACY",
+    title: "THE SKULL KING",
+    src: "https://images.printify.com/mockup/6a20e7f6de5d2b9583025dc5/117441/127480/sovereign-skull-crowned-in-silence.jpg?camera_label=front",
+    encrypted: true,
   },
 ];
 
@@ -331,7 +328,7 @@ function FilmStrip() {
 
   return (
     <section
-      aria-label="Archive film strip"
+      aria-label="Registry film strip"
       className="relative overflow-hidden border-y border-border/40 bg-background"
     >
       {/* Letterbox bars */}
@@ -344,7 +341,7 @@ function FilmStrip() {
 
       {/* Label rail */}
       <div className="absolute left-4 top-1/2 z-20 -translate-y-1/2 rotate-180 text-[9px] uppercase tracking-[0.5em] text-gold/60 [writing-mode:vertical-rl]">
-        CH · 001 — DRIFT REEL
+        REGISTRY · DRIFT REEL
       </div>
       <div className="absolute right-4 top-1/2 z-20 -translate-y-1/2 text-[9px] uppercase tracking-[0.5em] text-gold/60 [writing-mode:vertical-rl]">
         FLEEK ARCHIVE // LIVE
@@ -356,18 +353,29 @@ function FilmStrip() {
           {reel.map((f, i) => (
             <figure
               key={`${f.id}-${i}`}
-              className="relative h-full aspect-[16/9] flex-none overflow-hidden bg-card transition-[filter] duration-500 hover:[filter:contrast(1.05)_saturate(1.05)]"
+              className="relative h-full flex-none overflow-hidden bg-card transition-[filter] duration-500 hover:[filter:contrast(1.05)_saturate(1.05)]"
+              style={{ aspectRatio: "16/9" }}
             >
               <img
                 src={f.src}
                 alt={f.title}
                 loading="lazy"
                 className="h-full w-full object-cover"
+                style={{ objectPosition: "center 20%" }}
               />
               {/* Scanline overlay */}
               <div className="filmstrip-scanlines pointer-events-none absolute inset-0 mix-blend-overlay opacity-40" />
               {/* Periodic glitch sweep */}
               <div className="filmstrip-glitch pointer-events-none absolute inset-0" />
+              {/* ENCRYPTED watermark (glimpse effect) */}
+              {f.encrypted && (
+                <div className="pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-1.5 bg-background/40 px-2 py-1 backdrop-blur-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-red-500/70 animate-pulse" />
+                  <span className="text-[7px] uppercase tracking-[0.4em] text-foreground/30 font-mono">
+                    ENCRYPTED
+                  </span>
+                </div>
+              )}
               {/* Caption */}
               <figcaption className="absolute bottom-2 left-2 z-10 flex items-center gap-2 bg-background/60 px-2 py-1 backdrop-blur-sm">
                 <span className="h-1 w-1 bg-gold" />
