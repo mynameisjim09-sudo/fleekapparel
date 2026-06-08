@@ -355,21 +355,22 @@ function FilmStrip() {
       </div>
 
       {/* Reel */}
-      <div className="group relative h-[28vh] min-h-[200px] md:h-[34vh] md:min-h-[260px]">
+      <div className="group relative h-[40vh] min-h-[280px] md:h-[46vh] md:min-h-[360px]">
         <div className="filmstrip-track absolute inset-y-0 left-0 flex items-center gap-[40px]">
           {reel.map((f, i) => (
             <figure
               key={`${f.id}-${i}`}
               className="relative h-full flex-none overflow-hidden bg-card transition-[filter] duration-500 hover:[filter:contrast(1.05)_saturate(1.05)]"
-              style={{ aspectRatio: "16/9" }}
+              style={{ aspectRatio: "3/4" }}
             >
               <img
                 src={f.src}
                 alt={f.title}
                 loading="lazy"
-                className="h-full w-full object-cover"
-                style={{ objectPosition: "center 20%" }}
+                className="h-full w-full object-contain bg-card"
               />
+              {/* Seam buffer keeps the 40px black-space between frames consistent */}
+              <div className="pointer-events-none absolute inset-0 ring-1 ring-border/30" />
               {/* Scanline overlay */}
               <div className="filmstrip-scanlines pointer-events-none absolute inset-0 mix-blend-overlay opacity-40" />
               {/* Periodic glitch sweep */}
