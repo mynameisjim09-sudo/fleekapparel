@@ -301,8 +301,8 @@ function VariantRow({
 const FILMSTRIP = [
   {
     id: "architect-front",
-    label: "STAGE 02 · STRUCTURE",
-    title: "THE ARCHITECT",
+    label: "STAGE 02 · NAME",
+    title: "THE ARCHITECT — FRONT",
     src: "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front",
     encrypted: false,
   },
@@ -319,6 +319,13 @@ const FILMSTRIP = [
     title: "THE SKULL KING",
     src: "https://images.printify.com/mockup/6a20e7f6de5d2b9583025dc5/117441/127480/sovereign-skull-crowned-in-silence.jpg?camera_label=front",
     encrypted: true,
+  },
+  {
+    id: "architect-back",
+    label: "STAGE 02 · PHILOSOPHY",
+    title: "THE ARCHITECT — BACK",
+    src: "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=back",
+    encrypted: false,
   },
 ];
 
@@ -349,7 +356,7 @@ function FilmStrip() {
 
       {/* Reel */}
       <div className="group relative h-[28vh] min-h-[200px] md:h-[34vh] md:min-h-[260px]">
-        <div className="filmstrip-track absolute inset-y-0 left-0 flex items-center gap-4 md:gap-6">
+        <div className="filmstrip-track absolute inset-y-0 left-0 flex items-center gap-[40px]">
           {reel.map((f, i) => (
             <figure
               key={`${f.id}-${i}`}
