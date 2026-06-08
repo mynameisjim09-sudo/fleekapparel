@@ -411,11 +411,11 @@ function FilmStrip() {
           100% { transform: translate3d(-50%, 0, 0); }
         }
         .filmstrip-track {
-          animation: filmstrip-drift 90s linear infinite;
+          animation: filmstrip-drift 40s linear infinite;
           will-change: transform;
         }
         .group:hover .filmstrip-track {
-          animation-duration: 180s; /* 50% slower on hover */
+          animation-duration: 80s; /* 50% slower on hover */
         }
         .filmstrip-scanlines {
           background-image: repeating-linear-gradient(
