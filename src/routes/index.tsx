@@ -431,6 +431,180 @@ function FilmStrip() {
   );
 }
 
+// ── FLEEK Crossroads (Vigil vs Structure) ─────────────────────────────
+const CROSSROADS = [
+  {
+    id: "ronin",
+    stage: "01",
+    label: "THE VIGIL",
+    sub: "Stage 01 · Without master",
+    image:
+      "https://images.printify.com/mockup/6a24d3ccac2a0369d80cfad3/111248/105309/the-eternal-ronin-special-edition-archive.jpg?camera_label=front",
+    winner: "STAGE_01_RONIN",
+    loser: "STAGE_04_ARCHITECT",
+  },
+  {
+    id: "architect",
+    stage: "04",
+    label: "THE STRUCTURE",
+    sub: "Stage 04 · Builder of the unseen",
+    image:
+      "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front",
+    winner: "STAGE_04_ARCHITECT",
+    loser: "STAGE_01_RONIN",
+  },
+] as const;
+
+function Crossroads() {
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [aligned, setAligned] = useState<string | null>(null);
+  const [pending, setPending] = useState<string | null>(null);
+
+  const align = async (side: (typeof CROSSROADS)[number]) => {
+    if (aligned || pending) return;
+    setPending(side.id);
+    try {
+      const { logConsensusFeedback } = await import("@/lib/consensus.functions");
+      await logConsensusFeedback({
+        data: {
+          event: "VOTE",
+          registryStage: side.stage,
+          winner: side.winner,
+          loser: side.loser,
+          feedback: "crossroads_july4",
+          user: "anon",
+        },
+      });
+      setAligned(side.id);
+    } catch (e) {
+      console.error("Alignment failed", e);
+      setAligned(side.id);
+    } finally {
+      setPending(null);
+    }
+  };
+
+  return (
+    <section
+      aria-label="FLEEK Crossroads"
+      className="relative border-y border-border/40 bg-background"
+      onMouseLeave={() => setHovered(null)}
+    >
+      <div className="flex items-center justify-between px-6 py-5 md:px-12">
+        <div className="flex items-center gap-3">
+          <span className="h-1 w-1 bg-gold" />
+          <span className="text-[10px] uppercase tracking-[0.5em] text-gold">
+            Crossroads · July IV Drop
+          </span>
+        </div>
+        <span className="text-[10px] uppercase tracking-[0.4em] text-foreground/40">
+          Align the Archive
+        </span>
+      </div>
+
+      <div className="relative flex h-[70vh] min-h-[480px] w-full overflow-hidden md:h-[80vh]">
+        {CROSSROADS.map((side, i) => {
+          const isHover = hovered === side.id;
+          const otherHover = hovered && hovered !== side.id;
+          const isAligned = aligned === side.id;
+          const otherAligned = aligned && aligned !== side.id;
+          const flex = isAligned ? 3 : otherAligned ? 0.6 : isHover ? 2.2 : otherHover ? 0.8 : 1;
+          return (
+            <div
+              key={side.id}
+              onMouseEnter={() => !aligned && setHovered(side.id)}
+              className={`group relative h-full overflow-hidden transition-[flex-grow,filter] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                i === 0 ? "border-r border-border/40" : ""
+              } ${otherAligned ? "[filter:grayscale(1)_brightness(0.55)]" : ""}`}
+              style={{ flexGrow: flex, flexBasis: 0 }}
+            >
+              <img
+                src={side.image}
+                alt={side.label}
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+                style={{ objectPosition: "center 22%" }}
+              />
+
+              {!aligned && (
+                <>
+                  <div className="crossroads-static pointer-events-none absolute inset-0 mix-blend-overlay opacity-[0.22]" />
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55)_100%)]" />
+                  <div className="crossroads-scan pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay" />
+                </>
+              )}
+
+              {i === 0 && (
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-px bg-gradient-to-b from-transparent via-gold/40 to-transparent" />
+              )}
+
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-end gap-6 px-6 pb-16 text-center">
+                <div className="flex flex-col items-center gap-2">
+                  <span className="text-[9px] uppercase tracking-[0.6em] text-gold/70 font-mono">
+                    Chapter · {side.stage}
+                  </span>
+                  <h3 className="text-3xl font-light uppercase tracking-[0.55em] text-gold md:text-5xl lg:text-6xl">
+                    {side.label}
+                  </h3>
+                  <span className="text-[10px] uppercase tracking-[0.4em] text-foreground/50">
+                    {side.sub}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => align(side)}
+                  disabled={!!aligned || !!pending}
+                  className="group/btn relative mt-2 flex items-center gap-3 border border-gold/40 bg-background/30 px-8 py-3 text-[10px] uppercase tracking-[0.5em] text-gold backdrop-blur-sm transition-all duration-300 hover:border-gold hover:bg-gold/10 disabled:opacity-60"
+                >
+                  <span className="h-1 w-1 bg-gold transition-all duration-300 group-hover/btn:w-4" />
+                  {isAligned ? "Aligned" : pending === side.id ? "Recording…" : "Align"}
+                  <ArrowRight className="h-3 w-3" strokeWidth={1} />
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex items-center justify-between px-6 py-4 md:px-12">
+        <span className="text-[9px] uppercase tracking-[0.5em] text-foreground/40 font-mono">
+          {aligned
+            ? `// signal recorded · ${aligned === "ronin" ? "stage 01" : "stage 04"}`
+            : "// audience consensus · drop window open"}
+        </span>
+        <span className="text-[9px] uppercase tracking-[0.5em] text-foreground/40 font-mono">
+          07 / 04
+        </span>
+      </div>
+
+      <style>{`
+        @keyframes crossroads-static {
+          0%   { background-position: 0 0; }
+          100% { background-position: 100px 100px; }
+        }
+        .crossroads-static {
+          background-image:
+            repeating-radial-gradient(circle at 23% 17%, rgba(255,255,255,0.08) 0 1px, transparent 1px 3px),
+            repeating-radial-gradient(circle at 71% 63%, rgba(255,255,255,0.06) 0 1px, transparent 1px 4px);
+          animation: crossroads-static 1.6s steps(8) infinite;
+        }
+        .crossroads-scan {
+          background-image: repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.05) 0px,
+            rgba(255,255,255,0.05) 1px,
+            transparent 1px,
+            transparent 3px
+          );
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .crossroads-static { animation: none; }
+        }
+      `}</style>
+    </section>
+  );
+}
+
 function HomePage() {
   return (
     <>
@@ -438,6 +612,7 @@ function HomePage() {
       <main className="bg-background text-foreground">
         <Hero />
         <FilmStrip />
+        <Crossroads />
         <Lifestyle />
         <Gallery />
       </main>
