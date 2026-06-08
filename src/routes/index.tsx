@@ -298,33 +298,38 @@ function VariantRow({
 }
 
 // ── Slow-Drift Infinite Carousel (Letterbox film strip) ───────────────
+import architectFrontAsset from "@/assets/carousel/architect-front.png.asset.json";
+import dragonFrontAsset from "@/assets/carousel/dragon-front.png.asset.json";
+import skullFrontAsset from "@/assets/carousel/skull-front.png.asset.json";
+import architectBackAsset from "@/assets/carousel/architect-back.png.asset.json";
+
 const FILMSTRIP = [
   {
     id: "architect-front",
     label: "STAGE 02 · NAME",
     title: "THE ARCHITECT — FRONT",
-    src: "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front",
+    src: architectFrontAsset.url,
     encrypted: false,
   },
   {
     id: "dragon-front",
     label: "STAGE 03 · POWER",
     title: "THE DRAGON",
-    src: "https://images.printify.com/mockup/6a2412ff50a21acce208b01b/117441/127480/dragon-blade-flaming-archive.jpg?camera_label=front",
+    src: dragonFrontAsset.url,
     encrypted: true,
   },
   {
     id: "skull-front",
     label: "STAGE 04 · LEGACY",
     title: "THE SKULL KING",
-    src: "https://images.printify.com/mockup/6a20e7f6de5d2b9583025dc5/117441/127480/sovereign-skull-crowned-in-silence.jpg?camera_label=front",
+    src: skullFrontAsset.url,
     encrypted: true,
   },
   {
     id: "architect-back",
     label: "STAGE 02 · PHILOSOPHY",
     title: "THE ARCHITECT — BACK",
-    src: "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=back",
+    src: architectBackAsset.url,
     encrypted: false,
   },
 ];
