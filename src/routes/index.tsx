@@ -297,12 +297,139 @@ function VariantRow({
   );
 }
 
+// ── Slow-Drift Infinite Carousel (Letterbox film strip) ───────────────
+const FILMSTRIP = [
+  {
+    id: "ronin-front",
+    label: "001 · FRONT",
+    title: "FLEEK CREST",
+    src: "https://images.printify.com/mockup/6a24d3ccac2a0369d80cfad3/111248/105309/the-eternal-ronin-special-edition-archive.jpg?camera_label=front",
+  },
+  {
+    id: "architect-back",
+    label: "002 · BACK",
+    title: "ARCHITECT JUMBO",
+    src: "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=back",
+  },
+  {
+    id: "architect-front",
+    label: "002 · FRONT",
+    title: "FLEEK CREST",
+    src: "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front",
+  },
+  {
+    id: "ronin-back",
+    label: "001 · BACK",
+    title: "RONIN JUMBO",
+    src: "https://images.printify.com/mockup/6a24d3ccac2a0369d80cfad3/111248/105309/the-eternal-ronin-special-edition-archive.jpg?camera_label=back",
+  },
+];
+
+function FilmStrip() {
+  // Duplicate the set so the marquee loops seamlessly.
+  const reel = [...FILMSTRIP, ...FILMSTRIP];
+
+  return (
+    <section
+      aria-label="Archive film strip"
+      className="relative overflow-hidden border-y border-border/40 bg-background"
+    >
+      {/* Letterbox bars */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-3 bg-background" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-3 bg-background" />
+
+      {/* Edge fades */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-background to-transparent md:w-40" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-background to-transparent md:w-40" />
+
+      {/* Label rail */}
+      <div className="absolute left-4 top-1/2 z-20 -translate-y-1/2 rotate-180 text-[9px] uppercase tracking-[0.5em] text-gold/60 [writing-mode:vertical-rl]">
+        CH · 001 — DRIFT REEL
+      </div>
+      <div className="absolute right-4 top-1/2 z-20 -translate-y-1/2 text-[9px] uppercase tracking-[0.5em] text-gold/60 [writing-mode:vertical-rl]">
+        FLEEK ARCHIVE // LIVE
+      </div>
+
+      {/* Reel */}
+      <div className="group relative h-[28vh] min-h-[200px] md:h-[34vh] md:min-h-[260px]">
+        <div className="filmstrip-track absolute inset-y-0 left-0 flex items-center gap-4 md:gap-6">
+          {reel.map((f, i) => (
+            <figure
+              key={`${f.id}-${i}`}
+              className="relative h-full aspect-[16/9] flex-none overflow-hidden bg-card transition-[filter] duration-500 hover:[filter:contrast(1.05)_saturate(1.05)]"
+            >
+              <img
+                src={f.src}
+                alt={f.title}
+                loading="lazy"
+                className="h-full w-full object-cover"
+              />
+              {/* Scanline overlay */}
+              <div className="filmstrip-scanlines pointer-events-none absolute inset-0 mix-blend-overlay opacity-40" />
+              {/* Periodic glitch sweep */}
+              <div className="filmstrip-glitch pointer-events-none absolute inset-0" />
+              {/* Caption */}
+              <figcaption className="absolute bottom-2 left-2 z-10 flex items-center gap-2 bg-background/60 px-2 py-1 backdrop-blur-sm">
+                <span className="h-1 w-1 bg-gold" />
+                <span className="text-[8px] uppercase tracking-[0.35em] text-gold">
+                  {f.label}
+                </span>
+                <span className="text-[8px] uppercase tracking-[0.3em] text-foreground/70">
+                  {f.title}
+                </span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes filmstrip-drift {
+          0%   { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .filmstrip-track {
+          animation: filmstrip-drift 90s linear infinite;
+          will-change: transform;
+        }
+        .group:hover .filmstrip-track {
+          animation-duration: 180s; /* 50% slower on hover */
+        }
+        .filmstrip-scanlines {
+          background-image: repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.06) 0px,
+            rgba(255,255,255,0.06) 1px,
+            transparent 1px,
+            transparent 3px
+          );
+        }
+        @keyframes filmstrip-glitch {
+          0%, 92%, 100% { opacity: 0; transform: translateX(0); }
+          93%  { opacity: 0.5; transform: translateX(-2px); background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.18) 40%, rgba(255,0,80,0.12) 50%, transparent 100%); }
+          94%  { opacity: 0.2; transform: translateX(3px); background: linear-gradient(90deg, transparent 0%, rgba(0,255,200,0.15) 60%, transparent 100%); }
+          95%  { opacity: 0.6; transform: translateX(-1px); background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.18) 0 2px, transparent 2px 4px); }
+          96%  { opacity: 0; transform: translateX(0); }
+        }
+        .filmstrip-glitch {
+          animation: filmstrip-glitch 9s steps(1, end) infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .filmstrip-track { animation: none; }
+          .filmstrip-glitch { animation: none; }
+        }
+      `}</style>
+    </section>
+  );
+}
+
 function HomePage() {
   return (
     <>
       <SectorNav />
       <main className="bg-background text-foreground">
         <Hero />
+        <FilmStrip />
         <Lifestyle />
         <Gallery />
       </main>
