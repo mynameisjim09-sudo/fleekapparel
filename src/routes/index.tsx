@@ -424,24 +424,22 @@ function FilmStrip() {
 // ── FLEEK Crossroads (Vigil vs Structure) ─────────────────────────────
 const CROSSROADS = [
   {
-    id: "ronin",
-    stage: "01",
-    label: "THE VIGIL",
-    sub: "Stage 01 · Without master",
-    image:
-      "https://images.printify.com/mockup/6a24d3ccac2a0369d80cfad3/111248/105309/the-eternal-ronin-special-edition-archive.jpg?camera_label=front",
-    winner: "STAGE_01_RONIN",
+    id: "guardian",
+    stage: "11",
+    label: "THE GUARDIAN",
+    sub: "Asset 11 · Watcher of the gate",
+    image: architectFrontAsset.url,
+    winner: "ASSET_11_GUARDIAN",
     loser: "STAGE_04_ARCHITECT",
   },
   {
     id: "architect",
     stage: "04",
-    label: "THE STRUCTURE",
+    label: "THE ARCHITECT",
     sub: "Stage 04 · Builder of the unseen",
-    image:
-      "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front",
+    image: architectBackAsset.url,
     winner: "STAGE_04_ARCHITECT",
-    loser: "STAGE_01_RONIN",
+    loser: "ASSET_11_GUARDIAN",
   },
 ] as const;
 
