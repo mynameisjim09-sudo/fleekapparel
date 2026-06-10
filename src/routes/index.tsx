@@ -593,14 +593,138 @@ function Crossroads() {
   );
 }
 
+// ── Minimalist VS comparison ─────────────────────────────────────────
+function VersusBlock() {
+  const rows: Array<[string, string, string]> = [
+    ["DOCTRINE", "Watch. Hold the line.", "Build. Shape the unseen."],
+    ["WEIGHT", "480 GSM · French Terry", "500 GSM · Brushed Loop"],
+    ["INSIGNIA", "Gate Sigil · Chest", "Blueprint Glyph · Back"],
+    ["RUN", "120 units · Numbered", "80 units · Sealed"],
+  ];
+  return (
+    <section
+      aria-label="Guardian vs Architect comparison"
+      className="border-y border-border/40 bg-background px-6 py-24 md:px-16 md:py-32"
+    >
+      <div className="mx-auto max-w-5xl">
+        <div className="flex items-center justify-center gap-8">
+          <span className="font-display text-2xl uppercase tracking-[0.4em] text-foreground md:text-3xl">
+            GUARDIAN
+          </span>
+          <span className="font-display text-5xl tracking-[0.1em] text-gold md:text-7xl">
+            VS
+          </span>
+          <span className="font-display text-2xl uppercase tracking-[0.4em] text-foreground md:text-3xl">
+            ARCHITECT
+          </span>
+        </div>
+        <p className="mt-4 text-center text-[10px] uppercase tracking-[0.5em] text-muted-foreground">
+          Two doctrines. One archive.
+        </p>
+
+        <div className="mt-16 divide-y divide-border/40 border-y border-border/40">
+          {rows.map(([k, a, b]) => (
+            <div
+              key={k}
+              className="grid grid-cols-[1fr_auto_1fr] items-center gap-6 py-5 md:gap-12 md:py-7"
+            >
+              <p className="text-right text-xs uppercase tracking-[0.25em] text-foreground md:text-sm">
+                {a}
+              </p>
+              <p className="text-[9px] uppercase tracking-[0.5em] text-gold/70 font-mono">
+                {k}
+              </p>
+              <p className="text-left text-xs uppercase tracking-[0.25em] text-foreground md:text-sm">
+                {b}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Wolf Instinct: full-screen mockup, scale-up on scroll, creeping marquee ──
+function WolfInstinct() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // progress: 0 when section bottom hits viewport bottom, 1 when section top hits top
+      const total = rect.height + vh;
+      const seen = Math.min(Math.max(vh - rect.top, 0), total);
+      const p = seen / total;
+      setScale(1 + p * 0.25);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const phrase = "TRUST THE INSTINCT · ";
+  const marquee = phrase.repeat(12);
+
+  return (
+    <section
+      ref={ref}
+      aria-label="Wolf Instinct"
+      className="relative h-screen w-full overflow-hidden bg-background"
+    >
+      <img
+        src={dragonFrontAsset.url}
+        alt="Wolf Instinct — full mockup"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-out"
+        style={{ transform: `scale(${scale})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/10 to-background/80" />
+
+      {/* Creeping marquee */}
+      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 overflow-hidden">
+        <div className="wolf-marquee whitespace-nowrap font-display text-[18vw] uppercase tracking-[0.04em] leading-none text-foreground/90 mix-blend-difference">
+          {marquee}
+        </div>
+      </div>
+
+      <div className="absolute bottom-10 left-6 z-10 md:bottom-16 md:left-16">
+        <p className="text-[10px] uppercase tracking-[0.5em] text-gold">CHAPTER · INSTINCT</p>
+        <h2 className="mt-3 font-display text-3xl tracking-tight text-foreground md:text-5xl">
+          THE WOLF DOES NOT ASK PERMISSION.
+        </h2>
+      </div>
+
+      <style>{`
+        @keyframes wolf-creep {
+          0%   { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .wolf-marquee {
+          animation: wolf-creep 40s linear infinite;
+          will-change: transform;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .wolf-marquee { animation: none; }
+        }
+      `}</style>
+    </section>
+  );
+}
+
 function HomePage() {
   return (
     <>
       <SectorNav />
       <main className="bg-background text-foreground">
         <Hero />
-        <FilmStrip />
         <Crossroads />
+        <VersusBlock />
+        <WolfInstinct />
+        <FilmStrip />
         <Lifestyle />
         <Gallery />
       </main>
