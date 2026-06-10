@@ -557,7 +557,7 @@ function Crossroads() {
       <div className="flex items-center justify-between px-6 py-4 md:px-12">
         <span className="text-[9px] uppercase tracking-[0.5em] text-foreground/40 font-mono">
           {aligned
-            ? `// signal recorded · ${aligned === "ronin" ? "stage 01" : "stage 04"}`
+            ? `// signal recorded · ${aligned === "guardian" ? "asset 11" : "stage 04"}`
             : "// audience consensus · drop window open"}
         </span>
         <span className="text-[9px] uppercase tracking-[0.5em] text-foreground/40 font-mono">
