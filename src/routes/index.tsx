@@ -30,89 +30,65 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-// ── Narratives (hero cinematic carousel) ──────────────────────────────
-const NARRATIVES = [
-  {
-    id: "ronin",
-    label: "Chapter I",
-    title: "THE ETERNAL RONIN",
-    line: "Without a master. Without a name. Bound only to the blade.",
-    image:
-      "https://images.printify.com/mockup/6a24d3ccac2a0369d80cfad3/111248/105309/the-eternal-ronin-special-edition-archive.jpg?camera_label=front",
-  },
-  {
-    id: "architect",
-    label: "Chapter II",
-    title: "THE ARCHITECT",
-    line: "Builder of silent systems. Engineer of the unseen archive.",
-    image:
-      "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front",
-  },
+// ── Hero: 4-image slow-scroll carousel (Front · Side · Detail · Back) ──
+const HERO_FRAMES = [
+  { id: "front", label: "FRONT", title: "THE ARCHITECT", src: architectFrontAsset.url },
+  { id: "side", label: "SIDE", title: "THE DRAGON", src: dragonFrontAsset.url },
+  { id: "detail", label: "DETAIL", title: "THE SKULL KING", src: skullFrontAsset.url },
+  { id: "back", label: "BACK", title: "THE ARCHITECT — REVERSE", src: architectBackAsset.url },
 ];
 
 function Hero() {
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % NARRATIVES.length), 7000);
-    return () => clearInterval(t);
-  }, []);
+  const reel = [...HERO_FRAMES, ...HERO_FRAMES];
 
   return (
-    <section className="relative h-[92vh] w-full overflow-hidden bg-background">
-      {NARRATIVES.map((n, i) => (
-        <div
-          key={n.id}
-          className={`absolute inset-0 transition-opacity duration-[1800ms] ease-in-out ${
-            i === idx ? "opacity-100" : "opacity-0"
-          }`}
-          aria-hidden={i !== idx}
-        >
-          {/* Cinematic still — slow Ken-Burns drift simulates video, ends on the hoodie graphic */}
-          <img
-            src={n.image}
-            alt={n.title}
-            className={`absolute inset-0 h-full w-full object-cover ${
-              i === idx ? "animate-[kenburns_8s_ease-out_forwards]" : ""
-            }`}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-background/50" />
-        </div>
-      ))}
-
-      {/* Foreground copy */}
-      <div className="relative z-10 flex h-full flex-col justify-end px-6 pb-20 md:px-16 md:pb-28">
-        <div className="max-w-3xl">
-          <p className="text-[10px] uppercase tracking-[0.5em] text-gold">
-            {NARRATIVES[idx].label}
-          </p>
-          <h1 className="mt-4 font-display text-5xl leading-[0.95] tracking-tight text-foreground md:text-8xl">
-            {NARRATIVES[idx].title}
-          </h1>
-          <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
-            {NARRATIVES[idx].line}
-          </p>
-        </div>
-
-        {/* Carousel pips */}
-        <div className="mt-12 flex items-center gap-3">
-          {NARRATIVES.map((n, i) => (
-            <button
-              key={n.id}
-              onClick={() => setIdx(i)}
-              aria-label={`Show ${n.title}`}
-              className={`h-[2px] transition-all duration-500 ${
-                i === idx ? "w-16 bg-gold" : "w-8 bg-foreground/30 hover:bg-foreground/60"
-              }`}
+    <section
+      aria-label="Hero carousel"
+      className="relative h-[92vh] w-full overflow-hidden bg-background"
+    >
+      <div className="hero-reel absolute inset-y-0 left-0 flex items-center gap-0">
+        {reel.map((f, i) => (
+          <figure
+            key={`${f.id}-${i}`}
+            className="relative h-full w-screen flex-none"
+          >
+            <img
+              src={f.src}
+              alt={f.title}
+              className="absolute inset-0 h-full w-full object-cover"
+              loading={i < 2 ? "eager" : "lazy"}
             />
-          ))}
-        </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/10 to-background/90" />
+            <figcaption className="absolute bottom-24 left-6 z-10 md:bottom-32 md:left-16">
+              <p className="text-[10px] uppercase tracking-[0.5em] text-gold">
+                {f.label}
+              </p>
+              <h2 className="mt-3 font-display text-4xl leading-[0.95] tracking-tight text-foreground md:text-7xl">
+                {f.title}
+              </h2>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 px-6 pt-24 md:px-16 md:pt-32">
+        <p className="text-[10px] uppercase tracking-[0.5em] text-gold">FLEEK // FW26</p>
+        <h1 className="mt-3 max-w-3xl font-display text-3xl leading-[0.95] tracking-tight text-foreground md:text-5xl">
+          A Luxury Digital Archive.
+        </h1>
       </div>
 
       <style>{`
-        @keyframes kenburns {
-          0% { transform: scale(1.08) translate(0,0); }
-          100% { transform: scale(1.0) translate(0,0); }
+        @keyframes hero-drift {
+          0%   { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .hero-reel {
+          animation: hero-drift 60s linear infinite;
+          will-change: transform;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-reel { animation: none; }
         }
       `}</style>
     </section>
