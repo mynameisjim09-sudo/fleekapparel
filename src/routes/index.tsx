@@ -30,89 +30,65 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-// ── Narratives (hero cinematic carousel) ──────────────────────────────
-const NARRATIVES = [
-  {
-    id: "ronin",
-    label: "Chapter I",
-    title: "THE ETERNAL RONIN",
-    line: "Without a master. Without a name. Bound only to the blade.",
-    image:
-      "https://images.printify.com/mockup/6a24d3ccac2a0369d80cfad3/111248/105309/the-eternal-ronin-special-edition-archive.jpg?camera_label=front",
-  },
-  {
-    id: "architect",
-    label: "Chapter II",
-    title: "THE ARCHITECT",
-    line: "Builder of silent systems. Engineer of the unseen archive.",
-    image:
-      "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front",
-  },
+// ── Hero: 4-image slow-scroll carousel (Front · Side · Detail · Back) ──
+const HERO_FRAMES = [
+  { id: "front", label: "FRONT", title: "THE ARCHITECT", src: architectFrontAsset.url },
+  { id: "side", label: "SIDE", title: "THE DRAGON", src: dragonFrontAsset.url },
+  { id: "detail", label: "DETAIL", title: "THE SKULL KING", src: skullFrontAsset.url },
+  { id: "back", label: "BACK", title: "THE ARCHITECT — REVERSE", src: architectBackAsset.url },
 ];
 
 function Hero() {
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % NARRATIVES.length), 7000);
-    return () => clearInterval(t);
-  }, []);
+  const reel = [...HERO_FRAMES, ...HERO_FRAMES];
 
   return (
-    <section className="relative h-[92vh] w-full overflow-hidden bg-background">
-      {NARRATIVES.map((n, i) => (
-        <div
-          key={n.id}
-          className={`absolute inset-0 transition-opacity duration-[1800ms] ease-in-out ${
-            i === idx ? "opacity-100" : "opacity-0"
-          }`}
-          aria-hidden={i !== idx}
-        >
-          {/* Cinematic still — slow Ken-Burns drift simulates video, ends on the hoodie graphic */}
-          <img
-            src={n.image}
-            alt={n.title}
-            className={`absolute inset-0 h-full w-full object-cover ${
-              i === idx ? "animate-[kenburns_8s_ease-out_forwards]" : ""
-            }`}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-background/50" />
-        </div>
-      ))}
-
-      {/* Foreground copy */}
-      <div className="relative z-10 flex h-full flex-col justify-end px-6 pb-20 md:px-16 md:pb-28">
-        <div className="max-w-3xl">
-          <p className="text-[10px] uppercase tracking-[0.5em] text-gold">
-            {NARRATIVES[idx].label}
-          </p>
-          <h1 className="mt-4 font-display text-5xl leading-[0.95] tracking-tight text-foreground md:text-8xl">
-            {NARRATIVES[idx].title}
-          </h1>
-          <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
-            {NARRATIVES[idx].line}
-          </p>
-        </div>
-
-        {/* Carousel pips */}
-        <div className="mt-12 flex items-center gap-3">
-          {NARRATIVES.map((n, i) => (
-            <button
-              key={n.id}
-              onClick={() => setIdx(i)}
-              aria-label={`Show ${n.title}`}
-              className={`h-[2px] transition-all duration-500 ${
-                i === idx ? "w-16 bg-gold" : "w-8 bg-foreground/30 hover:bg-foreground/60"
-              }`}
+    <section
+      aria-label="Hero carousel"
+      className="relative h-[92vh] w-full overflow-hidden bg-background"
+    >
+      <div className="hero-reel absolute inset-y-0 left-0 flex items-center gap-0">
+        {reel.map((f, i) => (
+          <figure
+            key={`${f.id}-${i}`}
+            className="relative h-full w-screen flex-none"
+          >
+            <img
+              src={f.src}
+              alt={f.title}
+              className="absolute inset-0 h-full w-full object-cover"
+              loading={i < 2 ? "eager" : "lazy"}
             />
-          ))}
-        </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/10 to-background/90" />
+            <figcaption className="absolute bottom-24 left-6 z-10 md:bottom-32 md:left-16">
+              <p className="text-[10px] uppercase tracking-[0.5em] text-gold">
+                {f.label}
+              </p>
+              <h2 className="mt-3 font-display text-4xl leading-[0.95] tracking-tight text-foreground md:text-7xl">
+                {f.title}
+              </h2>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 px-6 pt-24 md:px-16 md:pt-32">
+        <p className="text-[10px] uppercase tracking-[0.5em] text-gold">FLEEK // FW26</p>
+        <h1 className="mt-3 max-w-3xl font-display text-3xl leading-[0.95] tracking-tight text-foreground md:text-5xl">
+          A Luxury Digital Archive.
+        </h1>
       </div>
 
       <style>{`
-        @keyframes kenburns {
-          0% { transform: scale(1.08) translate(0,0); }
-          100% { transform: scale(1.0) translate(0,0); }
+        @keyframes hero-drift {
+          0%   { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .hero-reel {
+          animation: hero-drift 60s linear infinite;
+          will-change: transform;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-reel { animation: none; }
         }
       `}</style>
     </section>
@@ -448,24 +424,22 @@ function FilmStrip() {
 // ── FLEEK Crossroads (Vigil vs Structure) ─────────────────────────────
 const CROSSROADS = [
   {
-    id: "ronin",
-    stage: "01",
-    label: "THE VIGIL",
-    sub: "Stage 01 · Without master",
-    image:
-      "https://images.printify.com/mockup/6a24d3ccac2a0369d80cfad3/111248/105309/the-eternal-ronin-special-edition-archive.jpg?camera_label=front",
-    winner: "STAGE_01_RONIN",
+    id: "guardian",
+    stage: "11",
+    label: "THE GUARDIAN",
+    sub: "Asset 11 · Watcher of the gate",
+    image: architectFrontAsset.url,
+    winner: "ASSET_11_GUARDIAN",
     loser: "STAGE_04_ARCHITECT",
   },
   {
     id: "architect",
     stage: "04",
-    label: "THE STRUCTURE",
+    label: "THE ARCHITECT",
     sub: "Stage 04 · Builder of the unseen",
-    image:
-      "https://images.printify.com/mockup/6a21a640bc4dad924d0a3651/111248/105309/asset-11-the-guardian-special-edition.jpg?camera_label=front",
+    image: architectBackAsset.url,
     winner: "STAGE_04_ARCHITECT",
-    loser: "STAGE_01_RONIN",
+    loser: "ASSET_11_GUARDIAN",
   },
 ] as const;
 
@@ -583,7 +557,7 @@ function Crossroads() {
       <div className="flex items-center justify-between px-6 py-4 md:px-12">
         <span className="text-[9px] uppercase tracking-[0.5em] text-foreground/40 font-mono">
           {aligned
-            ? `// signal recorded · ${aligned === "ronin" ? "stage 01" : "stage 04"}`
+            ? `// signal recorded · ${aligned === "guardian" ? "asset 11" : "stage 04"}`
             : "// audience consensus · drop window open"}
         </span>
         <span className="text-[9px] uppercase tracking-[0.5em] text-foreground/40 font-mono">
@@ -619,14 +593,138 @@ function Crossroads() {
   );
 }
 
+// ── Minimalist VS comparison ─────────────────────────────────────────
+function VersusBlock() {
+  const rows: Array<[string, string, string]> = [
+    ["DOCTRINE", "Watch. Hold the line.", "Build. Shape the unseen."],
+    ["WEIGHT", "480 GSM · French Terry", "500 GSM · Brushed Loop"],
+    ["INSIGNIA", "Gate Sigil · Chest", "Blueprint Glyph · Back"],
+    ["RUN", "120 units · Numbered", "80 units · Sealed"],
+  ];
+  return (
+    <section
+      aria-label="Guardian vs Architect comparison"
+      className="border-y border-border/40 bg-background px-6 py-24 md:px-16 md:py-32"
+    >
+      <div className="mx-auto max-w-5xl">
+        <div className="flex items-center justify-center gap-8">
+          <span className="font-display text-2xl uppercase tracking-[0.4em] text-foreground md:text-3xl">
+            GUARDIAN
+          </span>
+          <span className="font-display text-5xl tracking-[0.1em] text-gold md:text-7xl">
+            VS
+          </span>
+          <span className="font-display text-2xl uppercase tracking-[0.4em] text-foreground md:text-3xl">
+            ARCHITECT
+          </span>
+        </div>
+        <p className="mt-4 text-center text-[10px] uppercase tracking-[0.5em] text-muted-foreground">
+          Two doctrines. One archive.
+        </p>
+
+        <div className="mt-16 divide-y divide-border/40 border-y border-border/40">
+          {rows.map(([k, a, b]) => (
+            <div
+              key={k}
+              className="grid grid-cols-[1fr_auto_1fr] items-center gap-6 py-5 md:gap-12 md:py-7"
+            >
+              <p className="text-right text-xs uppercase tracking-[0.25em] text-foreground md:text-sm">
+                {a}
+              </p>
+              <p className="text-[9px] uppercase tracking-[0.5em] text-gold/70 font-mono">
+                {k}
+              </p>
+              <p className="text-left text-xs uppercase tracking-[0.25em] text-foreground md:text-sm">
+                {b}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Wolf Instinct: full-screen mockup, scale-up on scroll, creeping marquee ──
+function WolfInstinct() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // progress: 0 when section bottom hits viewport bottom, 1 when section top hits top
+      const total = rect.height + vh;
+      const seen = Math.min(Math.max(vh - rect.top, 0), total);
+      const p = seen / total;
+      setScale(1 + p * 0.25);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const phrase = "TRUST THE INSTINCT · ";
+  const marquee = phrase.repeat(12);
+
+  return (
+    <section
+      ref={ref}
+      aria-label="Wolf Instinct"
+      className="relative h-screen w-full overflow-hidden bg-background"
+    >
+      <img
+        src={dragonFrontAsset.url}
+        alt="Wolf Instinct — full mockup"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-out"
+        style={{ transform: `scale(${scale})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/10 to-background/80" />
+
+      {/* Creeping marquee */}
+      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 overflow-hidden">
+        <div className="wolf-marquee whitespace-nowrap font-display text-[18vw] uppercase tracking-[0.04em] leading-none text-foreground/90 mix-blend-difference">
+          {marquee}
+        </div>
+      </div>
+
+      <div className="absolute bottom-10 left-6 z-10 md:bottom-16 md:left-16">
+        <p className="text-[10px] uppercase tracking-[0.5em] text-gold">CHAPTER · INSTINCT</p>
+        <h2 className="mt-3 font-display text-3xl tracking-tight text-foreground md:text-5xl">
+          THE WOLF DOES NOT ASK PERMISSION.
+        </h2>
+      </div>
+
+      <style>{`
+        @keyframes wolf-creep {
+          0%   { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .wolf-marquee {
+          animation: wolf-creep 40s linear infinite;
+          will-change: transform;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .wolf-marquee { animation: none; }
+        }
+      `}</style>
+    </section>
+  );
+}
+
 function HomePage() {
   return (
     <>
       <SectorNav />
       <main className="bg-background text-foreground">
         <Hero />
-        <FilmStrip />
         <Crossroads />
+        <VersusBlock />
+        <WolfInstinct />
+        <FilmStrip />
         <Lifestyle />
         <Gallery />
       </main>
